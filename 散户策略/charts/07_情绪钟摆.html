@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>钟摆理论</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .chart-container {
+            background: rgba(255,255,255,0.95);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 900px;
+            width: 100%;
+        }
+        h1 {
+            color: #2d3748;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        .subtitle {
+            color: #718096;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+        canvas { max-height: 400px; }
+        .pendulum-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding: 0 20px;
+        }
+        .pendulum-labels span {
+            font-size: 12px;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        .fear { background: #fed7d7; color: #c53030; }
+        .greed { background: #c6f6d5; color: #276749; }
+        .center { background: #bee3f8; color: #2b6cb0; }
+        .legend-note {
+            background: #f7fafc;
+            border-left: 4px solid #9f7aea;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+        .legend-note h3 {
+            color: #2d3748;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .legend-note p {
+            color: #4a5568;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="chart-container">
+        <h1>⏰ 市场情绪钟摆理论</h1>
+        <p class="subtitle">恐惧与贪婪的周期性摆动 | 低买高卖的核心逻辑</p>
+        <canvas id="pendulumChart"></canvas>
+        <div class="pendulum-labels">
+            <span class="fear">😰 极度恐惧<br><small>贪婪指数0-30</small></span>
+            <span class="center">😐 理性区间<br><small>贪婪指数30-70</small></span>
+            <span class="greed">😱 极度贪婪<br><small>贪婪指数70-100</small></span>
+        </div>
+        
+        <div class="legend-note">
+            <h3>💡 逆向投资要点</h3>
+            <p>
+                <strong>极度恐惧时（贪婪指数<20）</strong>：股债利差>6%，市场见底信号 → 分批建仓<br>
+                <strong>极度贪婪时（贪婪指数>80）</strong>：融资余额创新高，街头巷尾谈股 → 分批减仓<br>
+                <strong>中间区域</strong>：保持现有仓位，不频繁操作
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('pendulumChart').getContext('2d');
+        
+        const months = ['18年6月','18年12月','19年6月','19年12月','20年3月','20年7月','21年2月','21年9月','22年4月','22年10月','23年6月','23年12月','24年2月'];
+        const fearIndex = [15, 85, 45, 55, 20, 75, 80, 35, 18, 88, 50, 25, 35];
+        const marketIndex = [3200, 4400, 3800, 4200, 3600, 4800, 5400, 4800, 4200, 3200, 4000, 3800, 4000];
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [
+                    {
+                        label: '贪婪恐惧指数',
+                        data: fearIndex,
+                        borderColor: '#9f7aea',
+                        backgroundColor: function(context) {
+                            const chart = context.chart;
+                            const {ctx, chartArea} = chart;
+                            if (!chartArea) return null;
+                            const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+                            gradient.addColorStop(0, 'rgba(159, 122, 234, 0.1)');
+                            gradient.addColorStop(1, 'rgba(159, 122, 234, 0.3)');
+                            return gradient;
+                        },
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 8,
+                        pointBackgroundColor: fearIndex.map(v => {
+                            if (v < 20) return '#38a169'; // 极度恐惧 -> 买入信号
+                            if (v > 80) return '#e53e3e'; // 极度贪婪 -> 卖出信号
+                            return '#9f7aea';
+                        }),
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: '沪深300指数',
+                        data: marketIndex,
+                        borderColor: '#3182ce',
+                        borderWidth: 2,
+                        fill: false,
+                        tension: 0.3,
+                        pointRadius: 4,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 15,
+                            font: { size: 12 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.parsed.y;
+                                if (context.datasetIndex === 0) {
+                                    let status = '';
+                                    if (value < 20) status = ' ✅ 买入信号';
+                                    else if (value > 80) status = ' 🚫 卖出信号';
+                                    return context.dataset.label + ': ' + value + status;
+                                }
+                                return context.dataset.label + ': ' + value + '点';
+                            }
+                        }
+                    },
+                    annotation: {
+                        annotations: {
+                            fearLine: {
+                                type: 'line',
+                                yMin: 20,
+                                yMax: 20,
+                                borderColor: 'rgba(56, 161, 105, 0.5)',
+                                borderWidth: 2,
+                                borderDash: [6, 6],
+                                label: { display: true, content: '极度恐惧线', position: 'start' }
+                            },
+                            greedLine: {
+                                type: 'line',
+                                yMin: 80,
+                                yMax: 80,
+                                borderColor: 'rgba(229, 62, 62, 0.5)',
+                                borderWidth: 2,
+                                borderDash: [6, 6],
+                                label: { display: true, content: '极度贪婪线', position: 'end' }
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        min: 0,
+                        max: 100,
+                        title: { display: true, text: '贪婪恐惧指数' },
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    },
+                    y1: {
+                        min: 2500,
+                        max: 5500,
+                        position: 'right',
+                        title: { display: true, text: '沪深300' },
+                        grid: { drawOnChartArea: false }
+                    },
+                    x: {
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

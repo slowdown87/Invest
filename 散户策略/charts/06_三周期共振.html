@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三周期共振</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .chart-container {
+            background: rgba(255,255,255,0.95);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 900px;
+            width: 100%;
+        }
+        h1 {
+            color: #2d3748;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        .subtitle {
+            color: #718096;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+        canvas { max-height: 400px; }
+        .cycle-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .cycle-card {
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .monthly { background: linear-gradient(135deg, #fed7e2, #fbb6ce); }
+        .weekly { background: linear-gradient(135deg, #bee3f8, #90cdf4); }
+        .daily { background: linear-gradient(135deg, #c6f6d5, #9ae6b4); }
+        .cycle-card h3 { font-size: 14px; margin-bottom: 8px; color: #2d3748; }
+        .cycle-card .period { font-size: 18px; font-weight: bold; color: #2d3748; }
+        .cycle-card .role { font-size: 11px; color: #4a5568; margin-top: 5px; }
+        .legend-note {
+            background: #f7fafc;
+            border-left: 4px solid #d69e2e;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+        .legend-note h3 {
+            color: #2d3748;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .legend-note p {
+            color: #4a5568;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="chart-container">
+        <h1>📊 月线周线日线三周期共振</h1>
+        <p class="subtitle">月线定方向 → 周线找买点 → 日线做确认</p>
+        <canvas id="tripleChart"></canvas>
+        
+        <div class="cycle-info">
+            <div class="cycle-card monthly">
+                <h3>🌙 月线（战略层）</h3>
+                <div class="period">20日均线</div>
+                <div class="role">定大方向：能否做多</div>
+            </div>
+            <div class="cycle-card weekly">
+                <h3>📅 周线（战役层）</h3>
+                <div class="period">20周均线</div>
+                <div class="role">找买点：在哪买</div>
+            </div>
+            <div class="cycle-card daily">
+                <h3>☀️ 日线（战术层）</h3>
+                <div class="period">5日均线</div>
+                <div class="role">做确认：何时买</div>
+            </div>
+        </div>
+        
+        <div class="legend-note">
+            <h3>💡 三周期共振买入条件</h3>
+            <p>
+                <strong>月线向上</strong>：5月>10月>20月均线多头排列 → 趋势向上<br>
+                <strong>周线企稳</strong>：回调至20周均线附近缩量企稳 → 买入区域<br>
+                <strong>日线突破</strong>：放量突破5日均线 → 精确买点<br>
+                <strong>止损位</strong>：跌破20周均线必须止损，单笔亏损不超过5%
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('tripleChart').getContext('2d');
+        
+        // 周线数据
+        const weeks = Array.from({length: 20}, (_, i) => `第${i+1}周`);
+        const weeklyPrice = [100, 95, 88, 82, 85, 90, 88, 85, 88, 92, 95, 98, 102, 105, 103, 100, 98, 102, 105, 108];
+        const weeklyMA20 = [102, 101, 100, 99, 98, 97, 96, 95, 94, 93, 93, 93, 93, 93, 93, 93, 93, 94, 94, 95];
+        
+        // 买入点标记
+        const buySignals = Array(20).fill(null);
+        buySignals[14] = 105; // 买入点
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: weeks,
+                datasets: [
+                    {
+                        label: '周线股价',
+                        data: weeklyPrice,
+                        borderColor: '#3182ce',
+                        backgroundColor: function(context) {
+                            const chart = context.chart;
+                            const {ctx, chartArea} = chart;
+                            if (!chartArea) return null;
+                            const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+                            gradient.addColorStop(0, 'rgba(49, 130, 206, 0.05)');
+                            gradient.addColorStop(1, 'rgba(49, 130, 206, 0.2)');
+                            return gradient;
+                        },
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: function(context) {
+                            return context.dataIndex === 14 ? 12 : 4;
+                        },
+                        pointBackgroundColor: function(context) {
+                            return context.dataIndex === 14 ? '#38a169' : '#3182ce';
+                        },
+                        pointBorderColor: function(context) {
+                            return context.dataIndex === 14 ? '#276749' : '#2b6cb0';
+                        },
+                        pointBorderWidth: 3
+                    },
+                    {
+                        label: '20周均线（止损线）',
+                        data: weeklyMA20,
+                        borderColor: '#e53e3e',
+                        borderWidth: 3,
+                        fill: false,
+                        tension: 0.4,
+                        pointRadius: 0
+                    },
+                    {
+                        label: '买入信号',
+                        data: buySignals,
+                        borderColor: '#38a169',
+                        backgroundColor: '#38a169',
+                        pointRadius: 12,
+                        pointStyle: 'triangle',
+                        showLine: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 15,
+                            font: { size: 12 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            afterBody: function(context) {
+                                if (context[0].dataIndex === 14) {
+                                    return '✅ 月线多头 + 周线企稳 + 日线突破 → 买入!';
+                                }
+                                return '';
+                            }
+                        }
+                    },
+                    annotation: {
+                        annotations: {
+                            line1: {
+                                type: 'line',
+                                yMin: 93,
+                                yMax: 93,
+                                borderColor: 'rgba(229, 62, 62, 0.5)',
+                                borderWidth: 2,
+                                borderDash: [6, 6]
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        min: 70,
+                        max: 115,
+                        grid: { color: 'rgba(0,0,0,0.05)' },
+                        ticks: {
+                            callback: function(value) {
+                                return value + '元';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

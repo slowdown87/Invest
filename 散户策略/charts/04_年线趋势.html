@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>年线趋势交易</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .chart-container {
+            background: rgba(255,255,255,0.95);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 900px;
+            width: 100%;
+        }
+        h1 {
+            color: #2d3748;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        .subtitle {
+            color: #718096;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+        canvas { max-height: 400px; }
+        .signal-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .signal {
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .buy-signal { background: #c6f6d5; border: 2px solid #38a169; }
+        .sell-signal { background: #fed7d7; border: 2px solid #e53e3e; }
+        .signal h3 { font-size: 16px; margin-bottom: 8px; }
+        .signal p { font-size: 12px; color: #4a5568; }
+        .legend-note {
+            background: #f7fafc;
+            border-left: 4px solid #3182ce;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+        .legend-note h3 {
+            color: #2d3748;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .legend-note p {
+            color: #4a5568;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="chart-container">
+        <h1>📈 年线趋势交易示意图</h1>
+        <p class="subtitle">沪深300指数年线（250日均线）牛熊分界 | 买卖信号示例</p>
+        <canvas id="yearLineChart"></canvas>
+        
+        <div class="signal-box">
+            <div class="signal buy-signal">
+                <h3>✅ 买入信号</h3>
+                <p>沪深300站上年线<br>连续3天站稳<br>→ 分批建仓，最多80%仓位</p>
+            </div>
+            <div class="signal sell-signal">
+                <h3>🚫 卖出信号</h3>
+                <p>沪深300跌破年线<br>连续3天无法收回<br>→ 清仓离场，不抢反弹</p>
+            </div>
+        </div>
+        
+        <div class="legend-note">
+            <h3>💡 年线交易要点</h3>
+            <p>
+                <strong>年线意义</strong>：代表市场中长期持仓者（机构）的平均成本<br>
+                <strong>线上操作</strong>：多头市场，顺势而为，只做多<br>
+                <strong>线下操作</strong>：空头市场，严格空仓，不抄底<br>
+                <strong>仓位控制</strong>：年线上方最高80%，下方0%（可持有部分ETF）
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('yearLineChart').getContext('2d');
+        
+        // 生成模拟数据：一轮牛熊周期
+        const months = ['18年1月','18年7月','19年1月','19年7月','20年1月','20年7月','21年1月','21年7月','22年1月','22年7月','23年1月','23年7月','24年1月'];
+        const indexPrice = [4400, 3200, 3600, 3800, 4200, 4800, 5400, 5200, 4500, 4200, 4000, 3800, 3500];
+        const yearLine = [4100, 3950, 3800, 3700, 3750, 3950, 4200, 4500, 4700, 4650, 4550, 4400, 4250];
+        
+        // 判断区域
+        const zones = indexPrice.map((p, i) => p > yearLine[i] ? 'bull' : 'bear');
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [
+                    {
+                        label: '沪深300指数',
+                        data: indexPrice,
+                        borderColor: '#3182ce',
+                        backgroundColor: function(context) {
+                            const chart = context.chart;
+                            const {ctx, chartArea} = chart;
+                            if (!chartArea) return null;
+                            const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+                            gradient.addColorStop(0, 'rgba(49, 130, 206, 0.1)');
+                            gradient.addColorStop(1, 'rgba(49, 130, 206, 0.3)');
+                            return gradient;
+                        },
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 8,
+                        pointBackgroundColor: indexPrice.map((p, i) => p > yearLine[i] ? '#38a169' : '#e53e3e'),
+                        pointBorderColor: indexPrice.map((p, i) => p > yearLine[i] ? '#276749' : '#c53030'),
+                        pointBorderWidth: 2
+                    },
+                    {
+                        label: '年线（250日均线）',
+                        data: yearLine,
+                        borderColor: '#e53e3e',
+                        borderWidth: 3,
+                        fill: false,
+                        tension: 0.3,
+                        pointRadius: 0
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                            font: { size: 12 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y + '点';
+                            },
+                            afterBody: function(context) {
+                                const idx = context[0].dataIndex;
+                                const status = indexPrice[idx] > yearLine[idx] ? '🟢 多头市场' : '🔴 空头市场';
+                                return status;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        min: 2500,
+                        max: 5800,
+                        grid: { color: 'rgba(0,0,0,0.05)' },
+                        ticks: {
+                            callback: function(value) {
+                                return value + '点';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

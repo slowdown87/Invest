@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>双低策略 - 可转债筛选</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .chart-container {
+            background: rgba(255,255,255,0.95);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 900px;
+            width: 100%;
+        }
+        h1 {
+            color: #2d3748;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        .subtitle {
+            color: #718096;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        canvas { max-height: 280px; }
+        .legend-note {
+            background: #f7fafc;
+            border-left: 4px solid #805ad5;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+        .legend-note h3 {
+            color: #2d3748;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .legend-note p {
+            color: #4a5568;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .quadrant {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+        .q1 { background: #fed7d7; color: #c53030; }
+        .q2 { background: #c6f6d5; color: #276749; }
+        .q3 { background: #feebc8; color: #c05621; }
+        .q4 { background: #bee3f8; color: #2b6cb0; }
+    </style>
+</head>
+<body>
+    <div class="chart-container">
+        <h1>📊 可转债双低策略筛选图</h1>
+        <p class="subtitle">横轴：溢价率（%）| 纵轴：价格（元）| 气泡大小：评级</p>
+        
+        <canvas id="doubleLowChart"></canvas>
+        
+        <div class="grid">
+            <div class="quadrant q1">
+                <strong>❌ 高价格+高溢价（禁区）</strong><br>价格>130元，溢价率>30%
+            </div>
+            <div class="quadrant q2">
+                <strong>✅ 双低区域（优选）</strong><br>价格<130元，溢价率<30%
+            </div>
+            <div class="quadrant q3">
+                <strong>⚠️ 低价格+高溢价</strong><br>正股弱势，关注基本面
+            </div>
+            <div class="quadrant q4">
+                <strong>⭐ 高价格+低溢价</strong><br>进攻性强，可适当关注
+            </div>
+        </div>
+        
+        <div class="legend-note">
+            <h3>💡 双低策略要点</h3>
+            <p>
+                <strong>选债标准</strong>：价格<130元 + 溢价率<30% + 评级AA及以上 + 剩余规模<5亿<br>
+                <strong>轮动频率</strong>：每2周或每月检查一次，卖出涨高的，换入新的双低标的<br>
+                <strong>风险提示</strong>：避开红色区域（高风险），优先绿色区域（安全边际高）
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('doubleLowChart').getContext('2d');
+        
+        const data = {
+            datasets: [
+                {
+                    label: 'A转债',
+                    data: [{x: 8, y: 108, r: 15}],
+                    backgroundColor: 'rgba(72, 187, 120, 0.7)',
+                    borderColor: '#38a169',
+                    borderWidth: 2
+                },
+                {
+                    label: 'B转债',
+                    data: [{x: 12, y: 102, r: 12}],
+                    backgroundColor: 'rgba(72, 187, 120, 0.7)',
+                    borderColor: '#38a169',
+                    borderWidth: 2
+                },
+                {
+                    label: 'C转债',
+                    data: [{x: 5, y: 115, r: 18}],
+                    backgroundColor: 'rgba(72, 187, 120, 0.7)',
+                    borderColor: '#38a169',
+                    borderWidth: 2
+                },
+                {
+                    label: 'D转债',
+                    data: [{x: 18, y: 98, r: 10}],
+                    backgroundColor: 'rgba(254, 178, 178, 0.7)',
+                    borderColor: '#c53030',
+                    borderWidth: 2
+                },
+                {
+                    label: 'E转债',
+                    data: [{x: 45, y: 125, r: 14}],
+                    backgroundColor: 'rgba(254, 178, 178, 0.7)',
+                    borderColor: '#c53030',
+                    borderWidth: 2
+                },
+                {
+                    label: 'F转债',
+                    data: [{x: 55, y: 108, r: 16}],
+                    backgroundColor: 'rgba(254, 178, 178, 0.7)',
+                    borderColor: '#c53030',
+                    borderWidth: 2
+                },
+                {
+                    label: 'G转债',
+                    data: [{x: 25, y: 138, r: 20}],
+                    backgroundColor: 'rgba(49, 130, 206, 0.7)',
+                    borderColor: '#2b6cb0',
+                    borderWidth: 2
+                },
+                {
+                    label: 'H转债',
+                    data: [{x: 15, y: 128, r: 13}],
+                    backgroundColor: 'rgba(237, 137, 54, 0.7)',
+                    borderColor: '#c05621',
+                    borderWidth: 2
+                },
+                {
+                    label: 'I转债',
+                    data: [{x: 22, y: 95, r: 11}],
+                    backgroundColor: 'rgba(237, 137, 54, 0.7)',
+                    borderColor: '#c05621',
+                    borderWidth: 2
+                },
+                {
+                    label: 'J转债',
+                    data: [{x: 28, y: 110, r: 15}],
+                    backgroundColor: 'rgba(72, 187, 120, 0.7)',
+                    borderColor: '#38a169',
+                    borderWidth: 2
+                },
+                {
+                    label: 'K转债',
+                    data: [{x: 10, y: 120, r: 14}],
+                    backgroundColor: 'rgba(72, 187, 120, 0.7)',
+                    borderColor: '#38a169',
+                    borderWidth: 2
+                },
+                {
+                    label: 'L转债',
+                    data: [{x: 35, y: 95, r: 9}],
+                    backgroundColor: 'rgba(237, 137, 54, 0.7)',
+                    borderColor: '#c05621',
+                    borderWidth: 2
+                }
+            ]
+        };
+
+        new Chart(ctx, {
+            type: 'bubble',
+            data: data,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 10,
+                            font: { size: 11 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const point = context.raw;
+                                return `${context.dataset.label}: 价格${point.y}元, 溢价率${point.x}%, 评级${point.r > 14 ? 'AAA' : 'AA'}`;
+                            }
+                        }
+                    },
+                    annotation: {
+                        annotations: {
+                            box1: {
+                                type: 'box',
+                                xMin: 0,
+                                xMax: 30,
+                                yMin: 100,
+                                yMax: 130,
+                                backgroundColor: 'rgba(72, 187, 120, 0.1)',
+                                borderColor: 'rgba(72, 187, 120, 0.5)',
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                label: {
+                                    display: true,
+                                    content: '双低区域',
+                                    position: 'start'
+                                }
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: '溢价率 (%)'
+                        },
+                        min: 0,
+                        max: 60,
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: '可转债价格（元）'
+                        },
+                        min: 90,
+                        max: 145,
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

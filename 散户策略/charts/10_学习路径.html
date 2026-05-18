@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习路径图</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .chart-container {
+            background: rgba(255,255,255,0.95);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 900px;
+            width: 100%;
+        }
+        h1 {
+            color: #2d3748;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        .subtitle {
+            color: #718096;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+        canvas { max-height: 400px; }
+        .path-legend {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .phase {
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .phase1 { background: linear-gradient(135deg, #bee3f8, #90cdf4); }
+        .phase2 { background: linear-gradient(135deg, #c6f6d5, #9ae6b4); }
+        .phase3 { background: linear-gradient(135deg, #feebc8, #fbd38d); }
+        .phase h3 { font-size: 14px; color: #2d3748; margin-bottom: 8px; }
+        .phase .duration { font-size: 12px; color: #4a5568; margin-bottom: 5px; }
+        .phase .strategies { font-size: 11px; color: #718096; }
+        .legend-note {
+            background: #f7fafc;
+            border-left: 4px solid #38a169;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+        .legend-note h3 {
+            color: #2d3748;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .legend-note p {
+            color: #4a5568;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="chart-container">
+        <h1>📚 散户投资学习路径图</h1>
+        <p class="subtitle">从零基础到专业投资者的成长阶梯 | 建议学习时长：6-12个月</p>
+        <canvas id="pathChart"></canvas>
+        
+        <div class="path-legend">
+            <div class="phase phase1">
+                <h3>🌱 第一阶段：筑基</h3>
+                <div class="duration">1-2个月</div>
+                <div class="strategies">
+                    策略1：宽基定投<br>
+                    策略10：仓位管理
+                </div>
+            </div>
+            <div class="phase phase2">
+                <h3>🌿 第二阶段：进阶</h3>
+                <div class="duration">3-4个月</div>
+                <div class="strategies">
+                    策略2：可转债双低<br>
+                    策略4：网格交易<br>
+                    策略5：年线趋势
+                </div>
+            </div>
+            <div class="phase phase3">
+                <h3>🌳 第三阶段：精通</h3>
+                <div class="duration">5-6个月+</div>
+                <div class="strategies">
+                    策略7：月周共振<br>
+                    策略8：价值投资<br>
+                    策略9：逆向投资
+                </div>
+            </div>
+        </div>
+        
+        <div class="legend-note">
+            <h3>💡 学习建议</h3>
+            <p>
+                <strong>循序渐进</strong>：不要跳级，每个阶段掌握后再进入下一阶段<br>
+                <strong>模拟验证</strong>：每个策略先用模拟盘验证2周以上再实盘<br>
+                <strong>定期复盘</strong>：每月总结学习成果，调整学习计划<br>
+                <strong>组合使用</strong>：进阶后可以将多个策略组合使用，形成自己的投资体系
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('pathChart').getContext('2d');
+        
+        const phases = ['筑基期\n(1-2月)', '进阶期\n(3-4月)', '精通期\n(5-6月)', '实战期\n(7-12月)'];
+        const progress = [100, 85, 60, 30];
+        const knowledge = [20, 45, 70, 95];
+        const confidence = [30, 50, 70, 90];
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: phases,
+                datasets: [
+                    {
+                        label: '知识掌握度',
+                        data: knowledge,
+                        borderColor: '#3182ce',
+                        backgroundColor: 'rgba(49, 130, 206, 0.2)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 8,
+                        pointBackgroundColor: '#3182ce'
+                    },
+                    {
+                        label: '实盘仓位比例',
+                        data: progress,
+                        borderColor: '#38a169',
+                        backgroundColor: 'rgba(56, 161, 105, 0.2)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 8,
+                        pointBackgroundColor: '#38a169'
+                    },
+                    {
+                        label: '信心指数',
+                        data: confidence,
+                        borderColor: '#d69e2e',
+                        backgroundColor: 'rgba(214, 158, 46, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 8,
+                        pointBackgroundColor: '#d69e2e',
+                        borderDash: [5, 5]
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            padding: 15,
+                            font: { size: 12 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.y + '%';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        min: 0,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: '百分比 (%)'
+                        },
+                        grid: { color: 'rgba(0,0,0,0.05)' },
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

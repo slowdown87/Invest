@@ -1,0 +1,83 @@
+{
+  "project": "零基础投资学教程",
+  "version": "1.0",
+  "status": "进行中",
+  "currentPhase": "执行阶段",
+  "createdDate": "2026-05-18",
+  "lastUpdated": "2026-05-18",
+  "summary": {
+    "description": "面向零基础学员的系统性投资学教程，从入门到精通，理论结合实践",
+    "totalChapters": 17,
+    "totalTasks": 22,
+    "completedTasks": 9,
+    "progress": "41%"
+  },
+  "progress": {
+    "total": 22,
+    "completed": 9,
+    "current": "工具掌握篇-第6章",
+    "percentage": 41
+  },
+  "taskList": [
+    {"id": 1, "name": "创建中文目录结构", "status": "completed", "completedDate": "2026-05-18"},
+    {"id": 2, "name": "生成规划文档.md", "status": "completed", "completedDate": "2026-05-18"},
+    {"id": 3, "name": "生成状态快照.json", "status": "completed", "completedDate": "2026-05-18"},
+    {"id": 4, "name": "前置基础篇-第0章（投资前的准备工作）", "status": "completed", "completedDate": "2026-05-18"},
+    {"id": 5, "name": "前置基础篇-第1章（理解金钱）", "status": "completed", "completedDate": "2026-05-18"},
+    {"id": 6, "name": "前置基础篇-第2章（读懂财务报表基础）", "status": "completed", "completedDate": "2026-05-18"},
+    {"id": 7, "name": "筑基入门篇-第3章（投资理财金融概念辨析）", "status": "completed", "completedDate": "2026-05-18"},
+    {"id": 8, "name": "筑基入门篇-第4章（中国金融市场体系）", "status": "completed", "completedDate": "2026-05-18"},
+    {"id": 9, "name": "筑基入门篇-第5章（投资工具全景图）", "status": "completed", "completedDate": "2026-05-18"},
+    {"id": 10, "name": "工具掌握篇-第6章（A股投资实战）", "status": "pending"},
+    {"id": 11, "name": "工具掌握篇-第7章（基金投资全攻略）", "status": "pending"},
+    {"id": 12, "name": "工具掌握篇-第8章（债券投资基础）", "status": "pending"},
+    {"id": 13, "name": "工具掌握篇-第9章（ETF与指数基金）", "status": "pending"},
+    {"id": 14, "name": "分析方法篇-第10章（公司基本面分析）", "status": "pending"},
+    {"id": 15, "name": "分析方法篇-第11章（估值方法详解）", "status": "pending"},
+    {"id": 16, "name": "分析方法篇-第12章（技术分析入门）", "status": "pending"},
+    {"id": 17, "name": "分析方法篇-第13章（宏观分析与行业周期）", "status": "pending"},
+    {"id": 18, "name": "实战进阶篇-第14章（资产配置与组合管理）", "status": "pending"},
+    {"id": 19, "name": "实战进阶篇-第15章（风险管理止损与投资心理）", "status": "pending"},
+    {"id": 20, "name": "实战进阶篇-第16章（从模拟盘到实盘）", "status": "pending"},
+    {"id": 21, "name": "生成术语表.md", "status": "pending"},
+    {"id": 22, "name": "生成学习路径图.md", "status": "pending"}
+  ],
+  "blockers": [],
+  "pendingConfirmations": [],
+  "projectSettings": {
+    "targetAudience": "零基础投资新手",
+    "theoryPracticeRatio": "5:5",
+    "targetMarket": "A股（中国大陆）",
+    "fileFormat": "Markdown",
+    "depthLevel": "入门级（含所有前置知识）"
+  },
+  "tutorialStructure": {
+    "前置基础篇": {
+      "chapters": 3,
+      "completed": 3,
+      "status": "已完成",
+      "description": "投资前的基础准备工作和财务知识"
+    },
+    "筑基入门篇": {
+      "chapters": 3,
+      "completed": 3,
+      "status": "已完成",
+      "description": "投资基本概念和金融市场认知"
+    },
+    "工具掌握篇": {
+      "chapters": 4,
+      "completed": 0,
+      "description": "主流投资工具的详细讲解"
+    },
+    "分析方法篇": {
+      "chapters": 4,
+      "completed": 0,
+      "description": "投资分析方法的系统学习"
+    },
+    "实战进阶篇": {
+      "chapters": 3,
+      "completed": 0,
+      "description": "实践应用和持续成长"
+    }
+  }
+}

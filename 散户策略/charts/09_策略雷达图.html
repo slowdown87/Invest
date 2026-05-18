@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>策略对比雷达图</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .chart-container {
+            background: rgba(255,255,255,0.95);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1000px;
+            width: 100%;
+        }
+        h1 {
+            color: #2d3748;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        .subtitle {
+            color: #718096;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+        .chart-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+        canvas { max-height: 350px; }
+        .strategy-legend {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .strategy-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .legend-note {
+            background: #f7fafc;
+            border-left: 4px solid #e53e3e;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+        .legend-note h3 {
+            color: #2d3748;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .legend-note p {
+            color: #4a5568;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="chart-container">
+        <h1>🎯 十种策略综合能力雷达图</h1>
+        <p class="subtitle">胜率 vs 盈利能力 vs 抗跌性 vs 简单性 vs 资金效率 vs 抗量化</p>
+        
+        <div class="chart-wrapper">
+            <canvas id="radarChart"></canvas>
+            <div class="strategy-legend">
+                <div class="strategy-item"><div class="dot" style="background:#e53e3e"></div>策略1：宽基定投</div>
+                <div class="strategy-item"><div class="dot" style="background:#38a169"></div>策略2：可转债双低</div>
+                <div class="strategy-item"><div class="dot" style="background:#3182ce"></div>策略3：高股息复利</div>
+                <div class="strategy-item"><div class="dot" style="background:#dd6b20"></div>策略4：网格交易</div>
+                <div class="strategy-item"><div class="dot" style="background:#805ad5"></div>策略5：年线趋势</div>
+                <div class="strategy-item"><div class="dot" style="background:#d69e2e"></div>策略6：均线合一</div>
+                <div class="strategy-item"><div class="dot" style="background:#319267"></div>策略7：月周共振</div>
+                <div class="strategy-item"><div class="dot" style="background:#00b5d8"></div>策略8：价值投资</div>
+                <div class="strategy-item"><div class="dot" style="background:#ed64a6"></div>策略9：逆向投资</div>
+                <div class="strategy-item"><div class="dot" style="background:#718096"></div>策略10：仓位管理</div>
+            </div>
+        </div>
+        
+        <div class="legend-note">
+            <h3>💡 策略选择建议</h3>
+            <p>
+                <strong>零基础首选</strong>：策略1（定投）+ 策略10（仓位管理）<br>
+                <strong>稳健型</strong>：策略2（可转债）+ 策略3（高股息）<br>
+                <strong>进取型</strong>：策略7（月周共振）+ 策略5（年线趋势）<br>
+                <strong>进阶型</strong>：策略8（价值投资）+ 策略9（逆向投资）
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('radarChart').getContext('2d');
+        
+        new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['胜率', '盈利能力', '抗跌性', '简单性', '资金效率', '抗量化'],
+                datasets: [
+                    {
+                        label: '策略1：宽基定投',
+                        data: [95, 75, 90, 95, 60, 95],
+                        backgroundColor: 'rgba(229, 62, 62, 0.2)',
+                        borderColor: '#e53e3e',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#e53e3e'
+                    },
+                    {
+                        label: '策略2：可转债双低',
+                        data: [85, 70, 95, 75, 65, 90],
+                        backgroundColor: 'rgba(56, 161, 105, 0.2)',
+                        borderColor: '#38a169',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#38a169'
+                    },
+                    {
+                        label: '策略3：高股息复利',
+                        data: [80, 75, 85, 85, 70, 80],
+                        backgroundColor: 'rgba(49, 130, 206, 0.2)',
+                        borderColor: '#3182ce',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#3182ce'
+                    },
+                    {
+                        label: '策略4：网格交易',
+                        data: [90, 60, 70, 70, 85, 98],
+                        backgroundColor: 'rgba(221, 107, 32, 0.2)',
+                        borderColor: '#dd6b20',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#dd6b20'
+                    },
+                    {
+                        label: '策略5：年线趋势',
+                        data: [80, 70, 80, 90, 75, 85],
+                        backgroundColor: 'rgba(128, 90, 213, 0.2)',
+                        borderColor: '#805ad5',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#805ad5'
+                    },
+                    {
+                        label: '策略7：月周共振',
+                        data: [85, 80, 75, 60, 80, 80],
+                        backgroundColor: 'rgba(49, 146, 103, 0.2)',
+                        borderColor: '#319267',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#319267'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.parsed.r;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    r: {
+                        min: 0,
+                        max: 100,
+                        ticks: {
+                            stepSize: 20,
+                            backdropColor: 'transparent'
+                        },
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        },
+                        angleLines: {
+                            color: 'rgba(0,0,0,0.1)'
+                        },
+                        pointLabels: {
+                            font: { size: 12, weight: 'bold' }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
