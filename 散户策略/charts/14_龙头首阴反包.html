@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>龙头首阴反包 - 策略14</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .chart-container {
+            background: rgba(255,255,255,0.98);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 900px;
+            width: 100%;
+        }
+        h1 { color: #2d3748; text-align: center; margin-bottom: 10px; font-size: 24px; }
+        .subtitle { color: #718096; text-align: center; margin-bottom: 25px; font-size: 14px; }
+        canvas { max-height: 400px; }
+        .legend-note {
+            background: #f7fafc;
+            border-left: 4px solid #e53e3e;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+        .legend-note h3 { color: #2d3748; font-size: 14px; margin-bottom: 8px; }
+        .legend-note p { color: #4a5568; font-size: 13px; line-height: 1.6; }
+        .highlight { color: #e53e3e; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="chart-container">
+        <h1>⚡ 龙头首阴反包原理图</h1>
+        <p class="subtitle">短线高盈亏比经典战法，盈亏比3:1，严格纪律下胜率70%</p>
+        <canvas id="reboundChart"></canvas>
+        <div class="legend-note">
+            <h3>💡 首阴反包操作解读</h3>
+            <p>
+                <strong>连板阶段</strong>：龙头连续涨停3-6板，积累人气和获利盘。<br>
+                <strong>首阴出现</strong>：第一根大阴线（跌幅≥7%），次日低开3-5%企稳买入。<br>
+                <strong>反包成功</strong>：吃掉首阴收复失地，次日冲高止盈。<br>
+                <strong>关键数据</strong>：<span class="highlight">严格纪律下胜率70%，盈亏比3:1，单只仓位≤15%</span>。
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('reboundChart').getContext('2d');
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['第1板', '第2板', '第3板', '第4板', '第5板', '第6板', '首阴', '次日买入', '反包成功', '止盈'],
+                datasets: [
+                    {
+                        label: '股价走势',
+                        data: [10, 12, 14.4, 17.3, 20.8, 24.9, 22.4, 21.5, 24.9, 27.4],
+                        borderColor: '#805ad5',
+                        backgroundColor: 'rgba(128, 90, 213, 0.2)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 6,
+                        pointBackgroundColor: function(context) {
+                            const index = context.dataIndex;
+                            if (index === 6) return '#e53e3e';
+                            if (index === 7) return '#dd6b20';
+                            if (index >= 8) return '#38a169';
+                            return '#805ad5';
+                        }
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { usePointStyle: true, padding: 20, font: { size: 12 } }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0,0,0,0.8)',
+                        padding: 12,
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.parsed.y;
+                                return '股价: ' + value.toFixed(1) + '元';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        position: 'left',
+                        title: { display: true, text: '股价 (元)' },
+                        min: 8,
+                        max: 30,
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    },
+                    x: { grid: { color: 'rgba(0,0,0,0.05)' } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

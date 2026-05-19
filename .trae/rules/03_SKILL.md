@@ -6,9 +6,9 @@
 
 | 技能 | 触发词 | 适用条件 |
 |------|--------|----------|
-| guided-ai | "分析"、"思考"、"深度分析" | 深度分析/多元方案 |
+| guided-ai | "深度分析"、"批判性思考" | 深度分析/多元方案 |
 | brainstorming | "头脑风暴"、"创意"、"想点子" | 创意生成/发散思维 |
-| consulting-analysis | "分析报告"、"市场分析"、"咨询" | 咨询级研究报告 |
+| consulting-analysis | "市场分析报告"、"行业研究"、"咨询" | 咨询级研究报告 |
 | multi-agent-sim | "多角色"、"模拟分析"、"多方视角" | 复杂多视角决策 |
 | self-improving-agent | "持续学习"、"改进"、"优化表现" | AI自我改进/持续学习 |
 
@@ -27,6 +27,7 @@
 | 技能 | 触发词 | 适用条件 |
 |------|--------|----------|
 | chart-visualization | "生成图表"、"可视化"、"图表" | 数据可视化/图表生成 |
+| image-generator | "生成图片"、"创建图片"、"设计封面"、"logo" | 图片生成/视觉内容 |
 
 ### 营销与SEO类
 
@@ -99,12 +100,6 @@
 
 ---
 
-## 规划执行铁律
-
-未通过自检清单 → 不输出计划 → 不进入执行 → 列出缺失项等待补充
-
----
-
 ## 冲突解决规则链
 
 详见 [02_SAFETY.md](../rules/02_SAFETY.md)
@@ -134,35 +129,3 @@
 
 ---
 
-## 动态协作
-
-### 技能组合
-
-| 场景 | 技能组合 |
-|------|----------|
-| 课程开发 | brainstorming + creative-design + writing-plans + content-generation |
-| 投资分析报告 | consulting-analysis + data-analysis + chart-visualization + report-generator |
-| 营销推广 | marketing-psychology + content-generation + seo-audit |
-| 用户体验测试 | dogfood + web-design-guidelines + seo-audit |
-| 复杂调试 | debug + planning |
-| 架构决策 | architecture + guided-ai |
-| 深度分析 | guided-ai + brainstorming + advanced-planning |
-| 文档生成 | generators + documentation |
-| 内容创作 | writing-plans + content-generation + chart-visualization |
-| 持续学习优化 | guided-ai + self-improving-agent |
-
----
-
-## 判断标准
-
-| 场景 | 简单 | 复杂 |
-|------|------|------|
-| 重构 | 单函数提取/重命名 | 跨文件职责重组 |
-| 修改 | <50行/单文件 | >50行/多文件 |
-| 调试 | 添加日志/打印变量 | 跨进程/并发问题 |
-| 审查 | 单文件/<200行 | 多文件/核心模块 |
-| 内容创作 | 短文本/<500字 | 长文/>2000字/多章节 |
-| 分析 | 单一数据源 | 多数据源/交叉验证 |
-| 设计 | 单页面/单组件 | 多页面/系统设计 |
-
----

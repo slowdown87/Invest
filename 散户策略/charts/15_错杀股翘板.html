@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>错杀股翘板 - 策略15</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .chart-container {
+            background: rgba(255,255,255,0.98);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 900px;
+            width: 100%;
+        }
+        h1 { color: #2d3748; text-align: center; margin-bottom: 10px; font-size: 24px; }
+        .subtitle { color: #718096; text-align: center; margin-bottom: 25px; font-size: 14px; }
+        canvas { max-height: 400px; }
+        .legend-note {
+            background: #fff5f5;
+            border-left: 4px solid #c53030;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+        .legend-note h3 { color: #2d3748; font-size: 14px; margin-bottom: 8px; }
+        .legend-note p { color: #4a5568; font-size: 13px; line-height: 1.6; }
+        .highlight { color: #c53030; font-weight: bold; }
+        .warning { color: #c53030; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="chart-container">
+        <h1>⚠️ 错杀股翘板原理图</h1>
+        <p class="subtitle">极端行情补充玩法，仅适合老手，极致风控下单次胜率65%</p>
+        <canvas id="rescueChart"></canvas>
+        <div class="legend-note">
+            <h3>💡 错杀翘板操作解读</h3>
+            <p>
+                <strong>错杀识别</strong>：基本面无问题+连续跌停≤2个+有资金承接+非系统性崩盘。<br>
+                <strong>买入时机</strong>：跌停即将打开时买入30%，撬板成功确认后再买50%。<br>
+                <strong>卖出时机</strong>：次日冲高立即止盈，低开无条件止损。<br>
+                <strong>风险警告</strong>：<span class="highlight">单只仓位≤10%，总仓位≤20%，绝不死扛补仓</span>。
+            </p>
+            <p class="warning">⚠️ 这是极端行情补充策略，不是主力玩法，宁缺毋滥！</p>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('rescueChart').getContext('2d');
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['第1跌停', '第2跌停', '撬板前', '撬板成功', '次日高开', '冲高卖出', '尾盘'],
+                datasets: [
+                    {
+                        label: '股价走势',
+                        data: [50, 45, 42.5, 44, 46.2, 49.5, 48.5],
+                        borderColor: '#c53030',
+                        backgroundColor: function(context) {
+                            const index = context.dataIndex;
+                            if (index < 3) return 'rgba(229, 62, 62, 0.3)';
+                            if (index >= 3 && index < 5) return 'rgba(56, 161, 105, 0.3)';
+                            return 'rgba(56, 161, 105, 0.1)';
+                        },
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 6,
+                        pointBackgroundColor: function(context) {
+                            const index = context.dataIndex;
+                            if (index < 3) return '#c53030';
+                            if (index >= 3 && index < 5) return '#38a169';
+                            return '#dd6b20';
+                        }
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { usePointStyle: true, padding: 20, font: { size: 12 } }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0,0,0,0.8)',
+                        padding: 12,
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.parsed.y;
+                                const pct = ((value - 50) / 50 * 100).toFixed(1);
+                                return '股价: ' + value.toFixed(1) + '元 (' + pct + '%)';
+                            }
+                        }
+                    },
+                    annotation: {
+                        annotations: {
+                            buyZone: {
+                                type: 'box',
+                                yMin: 42,
+                                yMax: 46,
+                                backgroundColor: 'rgba(56, 161, 105, 0.2)',
+                                label: { content: '买入区间', enabled: true }
+                            },
+                            sellZone: {
+                                type: 'box',
+                                yMin: 47,
+                                yMax: 51,
+                                backgroundColor: 'rgba(221, 107, 32, 0.2)',
+                                label: { content: '止盈区间', enabled: true }
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        position: 'left',
+                        title: { display: true, text: '股价 (元)' },
+                        min: 38,
+                        max: 55,
+                        grid: { color: 'rgba(0,0,0,0.05)' }
+                    },
+                    x: { grid: { color: 'rgba(0,0,0,0.05)' } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
