@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CH12-07 成交量分析图</title>
+    <!--
+    图表元数据：
+    - 图表编号: CH12-07
+    - 图表名称: 成交量分析图
+    - 所属章节: 第12章-技术分析入门
+    - 相关章节: 第12章-K线基础、第12章-均线系统
+    - 关键词: 成交量、量价关系、天量、地量、放量、缩量
+    - 创建日期: 2026-05-20
+    -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: "Microsoft YaHei", "SimHei", Arial, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .chart-card { background: rgba(255, 255, 255, 0.95); border-radius: 16px; padding: 30px; margin-bottom: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        .chart-title { font-size: 24px; font-weight: bold; color: #2c3e50; margin-bottom: 20px; text-align: center; border-bottom: 3px solid #e74c3c; padding-bottom: 15px; }
+        .chart-container { height: 450px; margin: 20px 0; }
+        .volume-rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0; }
+        .rule-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .rule-card.up { background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%); }
+        .rule-card.down { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
+        .rule-card.neutral { background: linear-gradient(135deg: #f39c12 0%, #d68910 100%); }
+        .rule-card h4 { font-size: 18px; margin-bottom: 15px; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px; }
+        .rule-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 14px; }
+        .rule-item:last-child { border-bottom: none; }
+        .rule-item .signal { font-weight: bold; color: #ffd700; }
+        .formula-section { background: #f8f9fa; padding: 20px; border-radius: 12px; margin: 20px 0; }
+        .formula-section h4 { color: #2c3e50; margin-bottom: 15px; }
+        .formula { background: white; padding: 15px; border-radius: 8px; margin: 10px 0; font-family: "Courier New", monospace; }
+        .tips-box { background: #e8f4f8; border-left: 4px solid #e74c3c; padding: 20px; margin: 20px 0; border-radius: 0 12px 12px 0; }
+        .tips-box h4 { color: #c0392b; margin-bottom: 15px; }
+        .comparison-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .comparison-table th, .comparison-table td { border: 1px solid #ddd; padding: 12px; text-align: center; }
+        .comparison-table th { background: #e74c3c; color: white; }
+        .comparison-table tr:nth-child(even) { background: #f8f9fa; }
+        .chapter-nav { background: #f8f9fa; padding: 20px; border-radius: 12px; margin-top: 20px; }
+        .chapter-nav h4 { color: #2c3e50; margin-bottom: 15px; }
+        .chapter-nav ul { list-style: none; padding: 0; }
+        .chapter-nav li { padding: 8px 0; border-bottom: 1px solid #ddd; }
+        .chapter-nav a { display: inline-block; margin-top: 15px; padding: 10px 20px; background: #3498db; color: white; text-decoration: none; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="chart-card">
+            <h1 class="chart-title">📊 成交量与价格关系分析图</h1>
+            
+            <div class="chart-container">
+                <canvas id="volumeChart"></canvas>
+            </div>
+
+            <div class="volume-rules">
+                <div class="rule-card up">
+                    <h4>📗 价涨量增（理想上涨）</h4>
+                    <div class="rule-item">
+                        <span>价格</span>
+                        <span class="signal">↑ 上涨</span>
+                    </div>
+                    <div class="rule-item">
+                        <span>成交量</span>
+                        <span class="signal">↑ 增加</span>
+                    </div>
+                    <div class="rule-item">
+                        <span>含义</span>
+                        <span>上涨动力充足</span>
+                    </div>
+                    <div class="rule-item">
+                        <span>信号</span>
+                        <span class="signal">✅ 继续看涨</span>
+                    </div>
+                </div>
+
+                <div class="rule-card down">
+                    <h4>📕 价跌量增（恐慌下跌）</h4>
+                    <div class="rule-item">
+                        <span>价格</span>
+                        <span class="signal">↓ 下跌</span>
+                    </div>
+                    <div class="rule-item">
+                        <span>成交量</span>
+                        <span class="signal">↑ 增加</span>
+                    </div>
+                    <div class="rule-item">
+                        <span>含义</span>
+                        <span>抛压沉重</span>
+                    </div>
+                    <div class="rule-item">
+                        <span>信号</span>
+                        <span class="signal">⚠️ 警惕加速</span>
+                    </div>
+                </div>
+
+                <div class="rule-card neutral">
+                    <h4>📙 价涨量缩（量价背离）</h4>
+                    <div class="rule-item">
+                        <span>价格</span>
+                        <span class="signal">↑ 上涨</span>
+                    </div>
+                    <div class="rule-item">
+                        <span>成交量</span>
+                        <span class="signal">↓ 萎缩</span>
+                    </div>
+                    <div class="rule-item">
+                        <span>含义</span>
+                        <span>上涨乏力</span>
+                    </div>
+                    <div class="rule-item">
+                        <span>信号</span>
+                        <span class="signal">⚠️ 警惕回调</span>
+                    </div>
+                </div>
+
+                <div class="rule-card up">
+                    <h4>📘 价跌量缩（量价背离）</h4>
+                    <div class="rule-item">
+                        <span>价格</span>
+                        <span class="signal">↓ 下跌</span>
+                    </div>
+                    <div class="rule-item">
+                        <span>成交量</span>
+                        <span class="signal">↓ 萎缩</span>
+                    </div>
+                    <div class="rule-item">
+                        <span>含义</span>
+                        <span>下跌动能减弱</span>
+                    </div>
+                    <div class="rule-item">
+                        <span>信号</span>
+                        <span class="signal">✅ 关注见底</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="formula-section">
+                <h4>🔢 成交量相关概念</h4>
+                <div class="formula">
+                    <strong>量比 = 当日每分钟成交量 / 过去5日每分钟平均成交量</strong><br>
+                    <small>量比 > 1.5：明显放量 | 量比 < 0.5：明显缩量</small>
+                </div>
+                <div class="formula">
+                    <strong>换手率 = 成交股数 / 流通股本 × 100%</strong><br>
+                    <small>换手率 > 10%：高度活跃 | 换手率 < 1%：极度低迷</small>
+                </div>
+                <div class="formula">
+                    <strong>均量线 = N日成交量的移动平均</strong><br>
+                    <small>用于判断量能趋势</small>
+                </div>
+            </div>
+
+            <div class="tips-box">
+                <h4>💡 成交量八大规律</h4>
+                <table class="comparison-table">
+                    <tr>
+                        <th>序号</th>
+                        <th>量价关系</th>
+                        <th>市场含义</th>
+                        <th>操作建议</th>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>价升量增</td>
+                        <td>买盘旺盛</td>
+                        <td>顺势买入</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>价升量缩</td>
+                        <td>动能不足</td>
+                        <td>谨慎追高</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>价跌量增</td>
+                        <td>恐慌抛售</td>
+                        <td>止损离场</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>价跌量缩</td>
+                        <td>惜售心理</td>
+                        <td>观望等待</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>天量见天价</td>
+                        <td>顶部信号</td>
+                        <td>减仓离场</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>地量见地价</td>
+                        <td>底部信号</td>
+                        <td>关注机会</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>突破放量</td>
+                        <td>有效突破</td>
+                        <td>确认买入</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>缩量整理</td>
+                        <td>蓄势待发</td>
+                        <td>等待方向</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="tips-box">
+                <h4>📌 A股成交量实战技巧</h4>
+                <p>
+                    <strong>1. 顶部放量要警惕</strong><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;股价高位放大量，往往是主力出货信号<br><br>
+                    <strong>2. 底部放量要关注</strong><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;股价低位温和放量，可能是建仓信号<br><br>
+                    <strong>3. 突破要放量确认</strong><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;突破重要压力位需要放量确认，否则可能是假突破<br><br>
+                    <strong>4. 缩量盘整要耐心</strong><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;盘整期间缩量是正常现象，等待放量选择方向
+                </p>
+            </div>
+
+            <div class="chapter-nav">
+                <h4>📖 相关章节</h4>
+                <ul>
+                    <li><strong>本章所属：</strong>第12章-技术分析入门</li>
+                    <li><strong>前置知识：</strong>第6章-股票交易基础、第12章-K线基础</li>
+                    <li><strong>延伸阅读：</strong>第12章-均线系统、第12章-技术形态</li>
+                    <li><strong>实战应用：</strong>第15章-风险管理止损与投资心理</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('volumeChart').getContext('2d');
+        
+        const priceData = [];
+        const volumeData = [];
+        let basePrice = 100;
+        
+        for (let i = 0; i < 40; i++) {
+            if (i < 10) {
+                basePrice += Math.random() * 5;
+            } else if (i < 15) {
+                basePrice -= Math.random() * 8;
+                volumeData.push(Math.random() * 300 + 200);
+            } else if (i < 25) {
+                basePrice += Math.random() * 4 - 1;
+                volumeData.push(Math.random() * 150 + 50);
+            } else if (i < 30) {
+                basePrice += Math.random() * 6;
+                volumeData.push(Math.random() * 250 + 150);
+            } else {
+                basePrice -= Math.random() * 3;
+                volumeData.push(Math.random() * 100 + 50);
+            }
+            priceData.push(basePrice);
+        }
+        
+        const upColor = priceData.map((p, i) => i > 0 && p > priceData[i-1] ? '#27ae60' : '#e74c3c');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: Array.from({length: 40}, (_, i) => `Day ${i+1}`),
+                datasets: [
+                    {
+                        label: '成交量',
+                        data: volumeData,
+                        backgroundColor: upColor,
+                        yAxisID: 'y1',
+                        borderRadius: 0
+                    },
+                    {
+                        label: '股价',
+                        data: priceData,
+                        type: 'line',
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        yAxisID: 'y',
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '成交量与价格关系示意图',
+                        font: { size: 16, weight: 'bold' }
+                    }
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: '价格'
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: '成交量'
+                        },
+                        grid: {
+                            drawOnChartArea: false
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>技术形态详解 - 零基础投资学教程</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        h1 {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle { text-align: center; color: #aaa; margin-bottom: 30px; }
+        .section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+        .section-title {
+            font-size: 1.3rem;
+            color: #4facfe;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .pattern-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin: 20px 0;
+        }
+        .pattern-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 25px;
+            border-left: 4px solid;
+        }
+        .pattern-card:nth-child(odd) { border-color: #f5576c; }
+        .pattern-card:nth-child(even) { border-color: #43e97b; }
+        .pattern-card h4 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .pattern-card h4 .icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        .pattern-svg {
+            width: 100%;
+            height: 150px;
+            margin: 15px 0;
+        }
+        .pattern-info {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        .pattern-info p {
+            font-size: 0.9rem;
+            line-height: 1.7;
+            margin: 5px 0;
+        }
+        .signal-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin: 5px;
+        }
+        .bullish { background: rgba(67,233,123,0.3); color: #43e97b; }
+        .bearish { background: rgba(255,107,107,0.3); color: #ff6b6b; }
+        .neutral { background: rgba(255,206,86,0.3); color: #ffce56; }
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .summary-table th, .summary-table td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .summary-table th { background: rgba(102,126,234,0.3); }
+        .summary-table tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(102,126,234,0.3), rgba(118,75,162,0.3));
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        .highlight-box h4 { margin-bottom: 10px; }
+        .highlight-box p { line-height: 1.8; font-size: 0.95rem; }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 技术形态详解图</h1>
+        <p class="subtitle">常见反转形态与持续形态——技术分析的核心</p>
+
+        <!-- 顶部反转形态 -->
+        <div class="section">
+            <div class="section-title">🔴 顶部反转形态（看跌信号）</div>
+            <div class="pattern-grid">
+                <div class="pattern-card">
+                    <h4>
+                        <span class="icon" style="background: rgba(255,107,107,0.3);">👤</span>
+                        头肩顶
+                    </h4>
+                    <svg class="pattern-svg" viewBox="0 0 300 100">
+                        <path d="M20,80 L80,30 L120,50 L160,10 L200,50 L240,80 L280,80" 
+                              fill="none" stroke="#ff6b6b" stroke-width="3"/>
+                        <line x1="80" y1="30" x2="80" y2="85" stroke="#aaa" stroke-width="1" stroke-dasharray="5,5"/>
+                        <line x1="160" y1="10" x2="160" y2="85" stroke="#aaa" stroke-width="1" stroke-dasharray="5,5"/>
+                        <line x1="240" y1="80" x2="240" y2="10" stroke="#aaa" stroke-width="1" stroke-dasharray="5,5"/>
+                        <text x="80" y="95" fill="#aaa" font-size="10">左肩</text>
+                        <text x="155" y="95" fill="#f5576c" font-size="10">头部</text>
+                        <text x="235" y="95" fill="#aaa" font-size="10">右肩</text>
+                        <path d="M20,80 L280,80" stroke="#ff6b6b" stroke-width="2" stroke-dasharray="5,5"/>
+                        <text x="140" y="20" fill="#ff6b6b" font-size="10">颈线（跌破看空）</text>
+                    </svg>
+                    <div class="pattern-info">
+                        <p>📌 <strong>结构</strong>：左肩、头部、右肩三个峰</p>
+                        <p>📌 <strong>颈线</strong>：连接左肩和右肩的低点</p>
+                        <p>📌 <strong>确认</strong>：跌破颈线放量</p>
+                    </div>
+                    <span class="signal-badge bearish">⚠️ 看跌</span>
+                    <span class="signal-badge neutral">需成交量确认</span>
+                </div>
+
+                <div class="pattern-card">
+                    <h4>
+                        <span class="icon" style="background: rgba(255,107,107,0.3);">M</span>
+                        双顶（M顶）
+                    </h4>
+                    <svg class="pattern-svg" viewBox="0 0 300 100">
+                        <path d="M20,80 L80,20 L130,50 L180,20 L260,80" 
+                              fill="none" stroke="#ff6b6b" stroke-width="3"/>
+                        <line x1="130" y1="20" x2="130" y2="85" stroke="#aaa" stroke-width="1" stroke-dasharray="5,5"/>
+                        <line x1="80" y1="20" x2="80" y2="85" stroke="#aaa" stroke-width="1" stroke-dasharray="5,5"/>
+                        <line x1="180" y1="20" x2="180" y2="85" stroke="#aaa" stroke-width="1" stroke-dasharray="5,5"/>
+                        <text x="80" y="15" fill="#aaa" font-size="10">顶1</text>
+                        <text x="175" y="15" fill="#aaa" font-size="10">顶2</text>
+                        <path d="M20,80 L260,80" stroke="#ff6b6b" stroke-width="2"/>
+                        <text x="100" y="75" fill="#f5576c" font-size="10">颈线</text>
+                        <path d="M130,80 L130,95 L180,95 L180,80" fill="none" stroke="#ff6b6b" stroke-width="2"/>
+                        <text x="135" y="92" fill="#f5576c" font-size="10">目标</text>
+                    </svg>
+                    <div class="pattern-info">
+                        <p>📌 <strong>结构</strong>：两个高度相近的峰</p>
+                        <p>📌 <strong>颈线</strong>：两峰之间的低点</p>
+                        <p>📌 <strong>目标位</strong>：颈线到顶部的距离</p>
+                    </div>
+                    <span class="signal-badge bearish">⚠️ 看跌</span>
+                    <span class="signal-badge neutral">第二顶通常略低</span>
+                </div>
+
+                <div class="pattern-card">
+                    <h4>
+                        <span class="icon" style="background: rgba(255,107,107,0.3);">⛰️</span>
+                        三重顶
+                    </h4>
+                    <svg class="pattern-svg" viewBox="0 0 300 100">
+                        <path d="M20,80 L60,25 L100,50 L140,25 L180,50 L220,25 L260,80" 
+                              fill="none" stroke="#ff6b6b" stroke-width="3"/>
+                        <path d="M20,80 L260,80" stroke="#ff6b6b" stroke-width="2"/>
+                        <text x="60" y="15" fill="#aaa" font-size="10">顶1</text>
+                        <text x="135" y="15" fill="#aaa" font-size="10">顶2</text>
+                        <text x="215" y="15" fill="#aaa" font-size="10">顶3</text>
+                    </svg>
+                    <div class="pattern-info">
+                        <p>📌 <strong>结构</strong>：三个高度相近的峰</p>
+                        <p>📌 <strong>强度</strong>：比双顶更看跌</p>
+                        <p>📌 <strong>确认</strong>：跌破颈线</p>
+                    </div>
+                    <span class="signal-badge bearish">⚠️ 强看跌</span>
+                    <span class="signal-badge neutral">少见的顶部形态</span>
+                </div>
+
+                <div class="pattern-card">
+                    <h4>
+                        <span class="icon" style="background: rgba(255,107,107,0.3);">🔺</span>
+                        顶部三角形
+                    </h4>
+                    <svg class="pattern-svg" viewBox="0 0 300 100">
+                        <path d="M20,30 L80,20 L140,25 L200,30 L260,80" 
+                              fill="none" stroke="#ff6b6b" stroke-width="3"/>
+                        <path d="M20,30 L260,80" fill="none" stroke="#ff6b6b" stroke-width="2"/>
+                        <line x1="20" y1="30" x2="20" y2="85" stroke="#aaa" stroke-width="1" stroke-dasharray="5,5"/>
+                        <line x1="260" y1="80" x2="260" y2="85" stroke="#aaa" stroke-width="1" stroke-dasharray="5,5"/>
+                        <text x="140" y="50" fill="#f5576c" font-size="10">下降三角形</text>
+                    </svg>
+                    <div class="pattern-info">
+                        <p>📌 <strong>类型</strong>：下降三角形/收敛三角</p>
+                        <p>📌 <strong>特征</strong>：高点不断降低</p>
+                        <p>📌 <strong>方向</strong>：通常向下突破</p>
+                    </div>
+                    <span class="signal-badge bearish">⚠️ 看跌</span>
+                    <span class="signal-badge neutral">需成交量确认</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部反转形态 -->
+        <div class="section">
+            <div class="section-title">🟢 底部反转形态（看涨信号）</div>
+            <div class="pattern-grid">
+                <div class="pattern-card">
+                    <h4>
+                        <span class="icon" style="background: rgba(67,233,123,0.3);">👤</span>
+                        头肩底
+                    </h4>
+                    <svg class="pattern-svg" viewBox="0 0 300 100">
+                        <path d="M20,30 L80,70 L120,50 L160,90 L200,50 L240,70 L280,30" 
+                              fill="none" stroke="#43e97b" stroke-width="3"/>
+                        <line x1="80" y1="70" x2="80" y2="20" stroke="#aaa" stroke-width="1" stroke-dasharray="5,5"/>
+                        <line x1="160" y1="90" x2="160" y2="20" stroke="#aaa" stroke-width="1" stroke-dasharray="5,5"/>
+                        <line x1="240" y1="70" x2="240" y2="20" stroke="#aaa" stroke-width="1" stroke-dasharray="5,5"/>
+                        <text x="80" y="65" fill="#aaa" font-size="10">左肩</text>
+                        <text x="155" y="95" fill="#43e97b" font-size="10">头部</text>
+                        <text x="235" y="65" fill="#aaa" font-size="10">右肩</text>
+                        <path d="M20,30 L280,30" stroke="#43e97b" stroke-width="2" stroke-dasharray="5,5"/>
+                        <text x="140" y="25" fill="#43e97b" font-size="10">颈线（突破看涨）</text>
+                    </svg>
+                    <div class="pattern-info">
+                        <p>📌 <strong>结构</strong>：左肩、头部、右肩三个谷</p>
+                        <p>📌 <strong>颈线</strong>：连接左肩和右肩的高点</p>
+                        <p>📌 <strong>确认</strong>：突破颈线放量</p>
+                    </div>
+                    <span class="signal-badge bullish">✅ 看涨</span>
+                    <span class="signal-badge neutral">需成交量确认</span>
+                </div>
+
+                <div class="pattern-card">
+                    <h4>
+                        <span class="icon" style="background: rgba(67,233,123,0.3);">W</span>
+                        双底（W底）
+                    </h4>
+                    <svg class="pattern-svg" viewBox="0 0 300 100">
+                        <path d="M20,30 L80,80 L130,50 L180,80 L260,30" 
+                              fill="none" stroke="#43e97b" stroke-width="3"/>
+                        <line x1="130" y1="80" x2="130" y2="25" stroke="#aaa" stroke-width="1" stroke-dasharray="5,5"/>
+                        <text x="75" y="95" fill="#aaa" font-size="10">底1</text>
+                        <text x="175" y="95" fill="#aaa" font-size="10">底2</text>
+                        <path d="M20,30 L260,30" stroke="#43e97b" stroke-width="2"/>
+                        <text x="100" y="25" fill="#43e97b" font-size="10">颈线</text>
+                        <path d="M130,30 L130,15 L180,15 L180,30" fill="none" stroke="#43e97b" stroke-width="2"/>
+                        <text x="140" y="12" fill="#43e97b" font-size="10">目标</text>
+                    </svg>
+                    <div class="pattern-info">
+                        <p>📌 <strong>结构</strong>：两个深度相近的谷</p>
+                        <p>📌 <strong>颈线</strong>：两谷之间的高点</p>
+                        <p>📌 <strong>目标位</strong>：颈线到谷底的距离</p>
+                    </div>
+                    <span class="signal-badge bullish">✅ 看涨</span>
+                    <span class="signal-badge neutral">第二底通常略低</span>
+                </div>
+
+                <div class="pattern-card">
+                    <h4>
+                        <span class="icon" style="background: rgba(67,233,123,0.3);">⛰️</span>
+                        三重底
+                    </h4>
+                    <svg class="pattern-svg" viewBox="0 0 300 100">
+                        <path d="M20,80 L60,30 L100,50 L140,30 L180,50 L220,30 L260,80" 
+                              fill="none" stroke="#43e97b" stroke-width="3"/>
+                        <path d="M20,80 L260,80" stroke="#43e97b" stroke-width="2"/>
+                        <text x="55" y="25" fill="#aaa" font-size="10">底1</text>
+                        <text x="135" y="25" fill="#aaa" font-size="10">底2</text>
+                        <text x="215" y="25" fill="#aaa" font-size="10">底3</text>
+                    </svg>
+                    <div class="pattern-info">
+                        <p>📌 <strong>结构</strong>：三个深度相近的谷</p>
+                        <p>📌 <strong>强度</strong>：比双底更看涨</p>
+                        <p>📌 <strong>确认</strong>：突破颈线</p>
+                    </div>
+                    <span class="signal-badge bullish">✅ 强看涨</span>
+                    <span class="signal-badge neutral">少见的底部形态</span>
+                </div>
+
+                <div class="pattern-card">
+                    <h4>
+                        <span class="icon" style="background: rgba(67,233,123,0.3);">🔻</span>
+                        底部三角形
+                    </h4>
+                    <svg class="pattern-svg" viewBox="0 0 300 100">
+                        <path d="M20,80 L80,70 L140,75 L200,70 L260,30" 
+                              fill="none" stroke="#43e97b" stroke-width="3"/>
+                        <path d="M20,80 L260,30" fill="none" stroke="#43e97b" stroke-width="2"/>
+                        <line x1="20" y1="80" x2="20" y2="85" stroke="#aaa" stroke-width="1" stroke-dasharray="5,5"/>
+                        <line x1="260" y1="30" x2="260" y2="85" stroke="#aaa" stroke-width="1" stroke-dasharray="5,5"/>
+                        <text x="140" y="55" fill="#43e97b" font-size="10">上升三角形</text>
+                    </svg>
+                    <div class="pattern-info">
+                        <p>📌 <strong>类型</strong>：上升三角形/收敛三角</p>
+                        <p>📌 <strong>特征</strong>：低点不断抬高</p>
+                        <p>📌 <strong>方向</strong>：通常向上突破</p>
+                    </div>
+                    <span class="signal-badge bullish">✅ 看涨</span>
+                    <span class="signal-badge neutral">需成交量确认</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 持续形态 -->
+        <div class="section">
+            <div class="section-title">📊 持续形态（延续趋势）</div>
+            <div class="pattern-grid">
+                <div class="pattern-card">
+                    <h4>
+                        <span class="icon" style="background: rgba(79,172,254,0.3);">🚩</span>
+                        旗形整理
+                    </h4>
+                    <svg class="pattern-svg" viewBox="0 0 300 100">
+                        <path d="M20,20 L260,20" stroke="#4facfe" stroke-width="2"/>
+                        <path d="M20,20 L20,40 L80,60 L20,80 L20,20" fill="rgba(79,172,254,0.3)" stroke="#4facfe" stroke-width="2"/>
+                        <path d="M80,60 L260,60" stroke="#4facfe" stroke-width="2"/>
+                        <text x="40" y="50" fill="#4facfe" font-size="10">旗杆</text>
+                        <text x="120" y="50" fill="#4facfe" font-size="10">旗面</text>
+                        <path d="M260,60 L280,90" stroke="#4facfe" stroke-width="2" stroke-dasharray="5,5"/>
+                        <text x="265" y="75" fill="#4facfe" font-size="10">突破</text>
+                    </svg>
+                    <div class="pattern-info">
+                        <p>📌 <strong>特征</strong>：急涨/急跌后的平行整理</p>
+                        <p>📌 <strong>方向</strong>：与原趋势同向突破</p>
+                        <p>📌 <strong>目标</strong>：旗杆高度的1-2倍</p>
+                    </div>
+                    <span class="signal-badge bullish">继续看涨</span>
+                    <span class="signal-badge neutral">短周期整理</span>
+                </div>
+
+                <div class="pattern-card">
+                    <h4>
+                        <span class="icon" style="background: rgba(79,172,254,0.3);">📐</span>
+                        楔形整理
+                    </h4>
+                    <svg class="pattern-svg" viewBox="0 0 300 100">
+                        <path d="M20,20 L140,60" stroke="#4facfe" stroke-width="2"/>
+                        <path d="M20,80 L140,60" stroke="#4facfe" stroke-width="2"/>
+                        <path d="M140,60 L200,60" stroke="#4facfe" stroke-width="2"/>
+                        <path d="M200,60 L260,30" stroke="#4facfe" stroke-width="2"/>
+                        <path d="M200,60 L260,70" stroke="#4facfe" stroke-width="2"/>
+                        <text x="70" y="45" fill="#aaa" font-size="10">收敛</text>
+                        <text x="220" y="45" fill="#4facfe" font-size="10">突破</text>
+                    </svg>
+                    <div class="pattern-info">
+                        <p>📌 <strong>类型</strong>：上升楔形/下降楔形</p>
+                        <p>📌 <strong>特征</strong>：趋势线收敛</p>
+                        <p>📌 <strong>方向</strong>：通常反向突破</p>
+                    </div>
+                    <span class="signal-badge neutral">中性</span>
+                    <span class="signal-badge bullish">上升楔形看跌</span>
+                </div>
+
+                <div class="pattern-card">
+                    <h4>
+                        <span class="icon" style="background: rgba(79,172,254,0.3);">📦</span>
+                        矩形整理
+                    </h4>
+                    <svg class="pattern-svg" viewBox="0 0 300 100">
+                        <path d="M20,20 L260,20" stroke="#4facfe" stroke-width="2"/>
+                        <path d="M20,80 L260,80" stroke="#4facfe" stroke-width="2"/>
+                        <line x1="80" y1="20" x2="80" y2="80" stroke="#aaa" stroke-width="1" stroke-dasharray="5,5"/>
+                        <line x1="140" y1="20" x2="140" y2="80" stroke="#aaa" stroke-width="1" stroke-dasharray="5,5"/>
+                        <line x1="200" y1="20" x2="200" y2="80" stroke="#aaa" stroke-width="1" stroke-dasharray="5,5"/>
+                        <text x="130" y="50" fill="#4facfe" font-size="10">震荡区间</text>
+                        <path d="M260,20 L260,5 L280,5" stroke="#4facfe" stroke-width="2"/>
+                        <path d="M260,80 L260,95 L280,95" stroke="#4facfe" stroke-width="2"/>
+                    </svg>
+                    <div class="pattern-info">
+                        <p>📌 <strong>特征</strong>：价格在两条平行线内震荡</p>
+                        <p>📌 <strong>类型</strong>：整理箱体</p>
+                        <p>📌 <strong>操作</strong>：高抛低吸</p>
+                    </div>
+                    <span class="signal-badge neutral">中性</span>
+                    <span class="signal-badge bullish">突破后跟方向</span>
+                </div>
+
+                <div class="pattern-card">
+                    <h4>
+                        <span class="icon" style="background: rgba(79,172,254,0.3);">🏝️</span>
+                        岛形反转
+                    </h4>
+                    <svg class="pattern-svg" viewBox="0 0 300 100">
+                        <path d="M20,30 L80,30" stroke="#ff6b6b" stroke-width="2"/>
+                        <line x1="80" y1="30" x2="80" y2="70" stroke="#aaa" stroke-width="1"/>
+                        <line x1="80" y1="70" x2="220" y2="70" stroke="#aaa" stroke-width="1"/>
+                        <line x1="220" y1="70" x2="220" y2="30" stroke="#aaa" stroke-width="1"/>
+                        <path d="M220,30 L280,30" stroke="#43e97b" stroke-width="2"/>
+                        <text x="130" y="50" fill="#aaa" font-size="10">缺口</text>
+                        <text x="130" y="85" fill="#aaa" font-size="10">岛形反转</text>
+                    </svg>
+                    <div class="pattern-info">
+                        <p>📌 <strong>特征</strong>：两个跳空缺口形成"岛"</p>
+                        <p>📌 <strong>类型</strong>：顶部岛形/底部岛形</p>
+                        <p>📌 <strong>强度</strong>：强烈的反转信号</p>
+                    </div>
+                    <span class="signal-badge bearish">顶部岛形看跌</span>
+                    <span class="signal-badge bullish">底部岛形看涨</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 形态总结表 -->
+        <div class="section">
+            <div class="section-title">📋 技术形态总结表</div>
+            <table class="summary-table">
+                <thead>
+                    <tr>
+                        <th>形态类型</th>
+                        <th>名称</th>
+                        <th>信号</th>
+                        <th>确认条件</th>
+                        <th>可靠性</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td rowspan="4" style="color:#ff6b6b;">顶部反转</td>
+                        <td>头肩顶</td>
+                        <td>看跌</td>
+                        <td>跌破颈线+放量</td>
+                        <td>⭐⭐⭐⭐</td>
+                    </tr>
+                    <tr>
+                        <td>双顶</td>
+                        <td>看跌</td>
+                        <td>跌破颈线</td>
+                        <td>⭐⭐⭐</td>
+                    </tr>
+                    <tr>
+                        <td>三重顶</td>
+                        <td>强看跌</td>
+                        <td>跌破颈线</td>
+                        <td>⭐⭐⭐⭐</td>
+                    </tr>
+                    <tr>
+                        <td>顶部三角形</td>
+                        <td>看跌</td>
+                        <td>向下突破</td>
+                        <td>⭐⭐⭐</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="4" style="color:#43e97b;">底部反转</td>
+                        <td>头肩底</td>
+                        <td>看涨</td>
+                        <td>突破颈线+放量</td>
+                        <td>⭐⭐⭐⭐</td>
+                    </tr>
+                    <tr>
+                        <td>双底</td>
+                        <td>看涨</td>
+                        <td>突破颈线</td>
+                        <td>⭐⭐⭐</td>
+                    </tr>
+                    <tr>
+                        <td>三重底</td>
+                        <td>强看涨</td>
+                        <td>突破颈线</td>
+                        <td>⭐⭐⭐⭐</td>
+                    </tr>
+                    <tr>
+                        <td>底部三角形</td>
+                        <td>看涨</td>
+                        <td>向上突破</td>
+                        <td>⭐⭐⭐</td>
+                    </tr>
+                    <tr>
+                        <td rowspan="4" style="color:#4facfe;">持续形态</td>
+                        <td>旗形</td>
+                        <td>继续</td>
+                        <td>顺向突破</td>
+                        <td>⭐⭐⭐⭐</td>
+                    </tr>
+                    <tr>
+                        <td>楔形</td>
+                        <td>中性</td>
+                        <td>反向突破</td>
+                        <td>⭐⭐⭐</td>
+                    </tr>
+                    <tr>
+                        <td>矩形</td>
+                        <td>中性</td>
+                        <td>突破方向</td>
+                        <td>⭐⭐</td>
+                    </tr>
+                    <tr>
+                        <td>岛形</td>
+                        <td>强反转</td>
+                        <td>缺口形成</td>
+                        <td>⭐⭐⭐⭐⭐</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 注意事项 -->
+        <div class="highlight-box">
+            <h4>⚠️ 使用技术形态的注意事项</h4>
+            <p>1. <strong>成交量确认</strong>：突破时需要放量，没有量的突破可能是假突破</p>
+            <p>2. <strong>周期选择</strong>：日线图比分时图更可靠，周线图更准确</p>
+            <p>3. <strong>结合其他指标</strong>：不要单独使用形态，配合均线、MACD等</p>
+            <p>4. <strong>形态失败</strong>：任何形态都可能失败，设定止损位很重要</p>
+            <p>5. <strong>时间因素</strong>：整理时间越长，突破后的力度越大</p>
+            <p>6. <strong>趋势配合</strong>：在明显趋势中使用形态更可靠</p>
+        </div>
+
+        <div class="footer">
+            <p>📚 零基础投资学教程 | 图表库-技术分析-CH12-02</p>
+            <p>注：技术分析仅供参考，不构成投资建议</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CH-CASE-03 乐视退市警示录</title>
+    <!--
+    图表元数据：
+    - 图表编号: CH-CASE-03
+    - 图表名称: 乐视退市警示录
+    - 所属案例: 乐视退（300104）
+    - 相关章节: 第10章-基本面分析、第15章-风险管理
+    - 关键词: 价值陷阱、财务造假、梦想窒息、退市
+    - 创建日期: 2026-05-20
+    - 备注: A股价值陷阱警示案例
+    -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: "Microsoft YaHei", "SimHei", Arial, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .chart-card { background: rgba(255, 255, 255, 0.95); border-radius: 16px; padding: 30px; margin-bottom: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        .chart-title { font-size: 24px; font-weight: bold; color: #2c3e50; margin-bottom: 20px; text-align: center; border-bottom: 3px solid #e74c3c; padding-bottom: 15px; }
+        .warning-banner { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; padding: 20px; border-radius: 12px; margin: 20px 0; text-align: center; }
+        .warning-banner h3 { font-size: 20px; margin-bottom: 10px; }
+        .warning-banner p { font-size: 16px; opacity: 0.9; }
+        .chart-container { height: 400px; margin: 20px 0; }
+        .milestone { background: #f8f9fa; padding: 20px; border-radius: 12px; margin: 20px 0; }
+        .milestone h4 { color: #2c3e50; margin-bottom: 15px; }
+        .timeline { display: flex; flex-direction: column; gap: 15px; }
+        .timeline-item { display: flex; gap: 15px; align-items: flex-start; }
+        .timeline-date { background: #e74c3c; color: white; padding: 5px 12px; border-radius: 20px; font-size: 12px; min-width: 80px; text-align: center; }
+        .timeline-content { flex: 1; }
+        .timeline-content h5 { color: #2c3e50; margin-bottom: 5px; }
+        .timeline-content p { font-size: 13px; color: #7f8c8d; }
+        .danger-box { background: #fce4ec; border-left: 4px solid #e74c3c; padding: 20px; margin: 20px 0; border-radius: 0 12px 12px 0; }
+        .danger-box h4 { color: #c0392b; margin-bottom: 15px; }
+        .lesson-box { background: #e8f4f8; border-left: 4px solid #3498db; padding: 20px; margin: 20px 0; border-radius: 0 12px 12px 0; }
+        .lesson-box h4 { color: #2980b9; margin-bottom: 15px; }
+        .checklist { background: white; padding: 15px; border-radius: 8px; margin: 10px 0; }
+        .check-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #eee; }
+        .check-item:last-child { border-bottom: none; }
+        .check-icon { color: #e74c3c; font-size: 18px; }
+        .chapter-nav { background: #f8f9fa; padding: 20px; border-radius: 12px; margin-top: 20px; }
+        .chapter-nav h4 { color: #2c3e50; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="chart-card">
+            <h1 class="chart-title">⚠️ 乐视退市警示录</h1>
+            
+            <div class="warning-banner">
+                <h3>💀 乐视帝国崩塌时间线</h3>
+                <p>"为梦想窒息" —— 贾跃亭</p>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="leshiChart"></canvas>
+            </div>
+
+            <div class="milestone">
+                <h4>📍 乐视兴衰关键节点</h4>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-date">2010.08</div>
+                        <div class="timeline-content">
+                            <h5>创业板上市</h5>
+                            <p>IPO发行价29.2元，上市首日涨47%</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date" style="background: #27ae60;">2015.05</div>
+                        <div class="timeline-content">
+                            <h5>股价巅峰179元</h5>
+                            <p>市值突破1700亿，贾跃亭成为创业板首富</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2016.11</div>
+                        <div class="timeline-content">
+                            <h5>资金链断裂曝光</h5>
+                            <p>供应商讨债，承认资金链紧张</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date" style="background: #95a5a6;">2017.07</div>
+                        <div class="timeline-content">
+                            <h5>贾跃亭出走美国</h5>
+                            <p>留下"下周回国"的承诺，至今未归</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date" style="background: #95a5a6;">2018.01</div>
+                        <div class="timeline-content">
+                            <h5>复牌连续跌停</h5>
+                            <p>13个一字跌停，股价从15元跌至4元</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date" style="background: #95a5a6;">2019.04</div>
+                        <div class="timeline-content">
+                            <h5>暂停上市</h5>
+                            <p>净资产为负，资不抵债</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date" style="background: #e74c3c;">2020.07</div>
+                        <div class="timeline-content">
+                            <h5>正式退市</h5>
+                            <p>从179元跌至0.18元，退市整理后摘牌</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2021.10</div>
+                        <div class="timeline-content">
+                            <h5>FF法拉第未来上市</h5>
+                            <p>贾跃亭在美通过SPAC上市，继续"造车梦"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="danger-box">
+                <h4>⚠️ 价值陷阱的六大特征</h4>
+                <div class="checklist">
+                    <div class="check-item">
+                        <span class="check-icon">❌</span>
+                        <span><strong>讲故事多于做业绩</strong> —— "生态化反"概念，无法落地</span>
+                    </div>
+                    <div class="check-item">
+                        <span class="check-icon">❌</span>
+                        <span><strong>关联交易频繁</strong> —— 大量关联交易输送利润，虚增业绩</span>
+                    </div>
+                    <div class="check-item">
+                        <span class="check-icon">❌</span>
+                        <span><strong>应收账款异常</strong> —— 应收账款远超营收增速</span>
+                    </div>
+                    <div class="check-item">
+                        <span class="check-icon">❌</span>
+                        <span><strong>现金流持续为负</strong> —— 经营现金流多年为负</span>
+                    </div>
+                    <div class="check-item">
+                        <span class="check-icon">❌</span>
+                        <span><strong>大股东频繁减持</strong> —— 贾跃亭高位套现超百亿</span>
+                    </div>
+                    <div class="check-item">
+                        <span class="check-icon">❌</span>
+                        <span><strong>业务铺得太广</strong> —— 手机、体育、汽车、影视全面亏损</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lesson-box">
+                <h4>✅ 如何避坑价值陷阱</h4>
+                <div class="checklist">
+                    <div class="check-item">
+                        <span class="check-icon" style="color: #27ae60;">✓</span>
+                        <span><strong>看现金流而非利润</strong> —— 利润可以造假，现金流很难</span>
+                    </div>
+                    <div class="check-item">
+                        <span class="check-icon" style="color: #27ae60;">✓</span>
+                        <span><strong>关联交易要警惕</strong> —— 关联交易占比过高需谨慎</span>
+                    </div>
+                    <div class="check-item">
+                        <span class="check-icon" style="color: #27ae60;">✓</span>
+                        <span><strong>大股东减持是信号</strong> —— 自己都不看好，凭什么让散户接盘？</span>
+                    </div>
+                    <div class="check-item">
+                        <span class="check-icon" style="color: #27ae60;">✓</span>
+                        <span><strong>不懂的不碰</strong> —— 多元化扩张往往是灾难</span>
+                    </div>
+                    <div class="check-item">
+                        <span class="check-icon" style="color: #27ae60;">✓</span>
+                        <span><strong>分散投资</strong> —— 单一股票仓位不超过20%</span>
+                    </div>
+                    <div class="check-item">
+                        <span class="check-icon" style="color: #27ae60;">✓</span>
+                        <span><strong>止损纪律</strong> —— 下跌30%无条件止损</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: #fff3cd; padding: 20px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #ffc107;">
+                <h4 style="color: #856404; margin-bottom: 15px;">📊 乐视vs茅台对比</h4>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr style="background: #f39c12; color: white;">
+                        <th style="padding: 12px; border: 1px solid #ddd;">指标</th>
+                        <th style="padding: 12px; border: 1px solid #ddd;">贵州茅台</th>
+                        <th style="padding: 12px; border: 1px solid #ddd;">乐视</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #ddd;">主营专注度</td>
+                        <td style="padding: 12px; border: 1px solid #ddd; color: #27ae60;">✅ 专注白酒</td>
+                        <td style="padding: 12px; border: 1px solid #ddd; color: #e74c3c;">❌ 多元扩张</td>
+                    </tr>
+                    <tr style="background: #f8f9fa;">
+                        <td style="padding: 12px; border: 1px solid #ddd;">现金流</td>
+                        <td style="padding: 12px; border: 1px solid #ddd; color: #27ae60;">✅ 持续为正</td>
+                        <td style="padding: 12px; border: 1px solid #ddd; color: #e74c3c;">❌ 多年为负</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #ddd;">毛利率</td>
+                        <td style="padding: 12px; border: 1px solid #ddd; color: #27ae60;">✅ 90%+</td>
+                        <td style="padding: 12px; border: 1px solid #ddd; color: #e74c3c;">❌ 20%-</td>
+                    </tr>
+                    <tr style="background: #f8f9fa;">
+                        <td style="padding: 12px; border: 1px solid #ddd;">大股东行为</td>
+                        <td style="padding: 12px; border: 1px solid #ddd; color: #27ae60;">✅ 分红为主</td>
+                        <td style="padding: 12px; border: 1px solid #ddd; color: #e74c3c;">❌ 疯狂减持</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="chapter-nav">
+                <h4>📖 相关章节</h4>
+                <ul>
+                    <li><strong>核心关联：</strong>第2章-财务报表、第10章-基本面分析、第15章-风险管理</li>
+                    <li><strong>延伸阅读：</strong>第17章-巴菲特投资体系、第18章-资产配置</li>
+                    <li><strong>相关案例：</strong>CH-CASE-01 贵州茅台、CH-CASE-02 宁德时代</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('leshiChart').getContext('2d');
+        
+        const years = ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020'];
+        const priceData = [30, 25, 35, 50, 75, 179, 90, 15, 4, 1.7, 0.18];
+        const revenueData = [2.4, 5.9, 11.7, 23.6, 68.2, 130, 219, 70, 15.6, 4.9, 0.09];
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: years,
+                datasets: [
+                    {
+                        label: '股价（元）',
+                        data: priceData,
+                        borderColor: '#e74c3c',
+                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: '营收（亿元）',
+                        data: revenueData,
+                        borderColor: '#95a5a6',
+                        backgroundColor: 'rgba(149, 165, 166, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '乐视退市完整走势图（2010-2020）',
+                        font: { size: 16, weight: 'bold' }
+                    },
+                    annotation: {
+                        annotations: {
+                            peak: {
+                                type: 'point',
+                                x: '2015',
+                                y: 179,
+                                backgroundColor: '#e74c3c',
+                                radius: 10,
+                                label: { content: '最高179元', enabled: true }
+                            },
+                            delist: {
+                                type: 'point',
+                                x: '2020',
+                                y: 0.18,
+                                backgroundColor: '#2c3e50',
+                                radius: 10,
+                                label: { content: '退市0.18元', enabled: true }
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: '股价（元）'
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: '营收（亿元）'
+                        },
+                        grid: {
+                            drawOnChartArea: false
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

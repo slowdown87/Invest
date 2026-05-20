@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CH12-05 KDJ指标详解</title>
+    <!--
+    图表元数据：
+    - 图表编号: CH12-05
+    - 图表名称: KDJ指标详解
+    - 所属章节: 第12章-技术分析入门
+    - 相关章节: 第12章-K线基础、第12章-均线系统、第12章-MACD指标
+    - 关键词: KDJ、超买超卖、金叉死叉、随机指标
+    - 创建日期: 2026-05-20
+    -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: "Microsoft YaHei", "SimHei", Arial, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .chart-card { background: rgba(255, 255, 255, 0.95); border-radius: 16px; padding: 30px; margin-bottom: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        .chart-title { font-size: 24px; font-weight: bold; color: #2c3e50; margin-bottom: 20px; text-align: center; border-bottom: 3px solid #9b59b6; padding-bottom: 15px; }
+        .formula-section { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 12px; margin: 20px 0; }
+        .formula-section h4 { font-size: 18px; margin-bottom: 15px; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px; }
+        .formula { background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px; margin: 10px 0; font-family: "Courier New", monospace; font-size: 15px; }
+        .signal-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 20px 0; }
+        .signal-card { padding: 20px; border-radius: 12px; text-align: center; color: white; }
+        .signal-card.buy { background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); }
+        .signal-card.sell { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
+        .signal-card.neutral { background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%); }
+        .signal-card h5 { font-size: 16px; margin-bottom: 10px; }
+        .chart-container { height: 400px; margin: 20px 0; }
+        .range-indicator { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
+        .range-bar { height: 40px; border-radius: 8px; position: relative; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
+        .range-low { background: linear-gradient(90deg, #27ae60 0%, #27ae60 33%, #fff3cd 33%, #fff3cd 67%, #f39c12 67%, #f39c12 100%); }
+        .range-mid { background: linear-gradient(90deg, #27ae60 0%, #27ae60 20%, #fff3cd 20%, #fff3cd 40%, #95a5a6 40%, #95a5a6 60%, #fff3cd 60%, #fff3cd 80%, #e74c3c 80%, #e74c3c 100%); }
+        .tips-box { background: #e8f4f8; border-left: 4px solid #3498db; padding: 20px; margin: 20px 0; border-radius: 0 12px 12px 0; }
+        .tips-box h4 { color: #2980b9; margin-bottom: 15px; }
+        .comparison-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .comparison-table th, .comparison-table td { border: 1px solid #ddd; padding: 12px; text-align: center; }
+        .comparison-table th { background: #9b59b6; color: white; }
+        .comparison-table tr:nth-child(even) { background: #f8f9fa; }
+        .chapter-nav { background: #f8f9fa; padding: 20px; border-radius: 12px; margin-top: 20px; }
+        .chapter-nav h4 { color: #2c3e50; margin-bottom: 15px; }
+        .chapter-nav ul { list-style: none; padding: 0; }
+        .chapter-nav li { padding: 8px 0; border-bottom: 1px solid #ddd; }
+        .chapter-nav a { display: inline-block; margin-top: 15px; padding: 10px 20px; background: #3498db; color: white; text-decoration: none; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="chart-card">
+            <h1 class="chart-title">📊 KDJ随机指标详解</h1>
+            
+            <div class="formula-section">
+                <h4>🔢 KDJ指标计算公式</h4>
+                <div class="formula">
+                    <strong>RSV (未成熟随机值) = (收盘价 - N日内最低价) / (N日内最高价 - N日内最低价) × 100</strong><br>
+                    <small>其中N默认为9</small>
+                </div>
+                <div class="formula">
+                    <strong>K值 = 2/3 × 前一日K值 + 1/3 × 当日RSV</strong>
+                </div>
+                <div class="formula">
+                    <strong>D值 = 2/3 × 前一日D值 + 1/3 × 当日K值</strong>
+                </div>
+                <div class="formula" style="background: rgba(255,255,255,0.3);">
+                    <strong>J值 = 3 × K值 - 2 × D值</strong><br>
+                    <small>J值反映K值和D值的乖离程度，波动最大最灵敏</small>
+                </div>
+            </div>
+
+            <div class="signal-cards">
+                <div class="signal-card buy">
+                    <h5>📗 KDJ金叉买入</h5>
+                    <p>K线从下往上穿越D线<br><strong>发生在20以下低位：</strong><br>强烈买入信号</p>
+                </div>
+                <div class="signal-card sell">
+                    <h5>📕 KDJ死叉卖出</h5>
+                    <p>K线从上往下穿越D线<br><strong>发生在80以上高位：</strong><br>强烈卖出信号</p>
+                </div>
+                <div class="signal-card neutral">
+                    <h5>📙 超买区域</h5>
+                    <p>K、D、J值 > 80<br>市场可能过热<br><strong>警惕回调风险</strong></p>
+                </div>
+                <div class="signal-card neutral">
+                    <h5>📘 超卖区域</h5>
+                    <p>K、D、J值 < 20<br>市场可能超卖<br><strong>关注反弹机会</strong></p>
+                </div>
+            </div>
+
+            <div class="range-indicator">
+                <h4 style="margin-bottom: 15px;">KDJ指标超买超卖区间</h4>
+                <div class="range-bar range-low">
+                    <span style="position: absolute; left: 10%;">0</span>
+                    <span style="position: absolute; left: 35%; font-size: 12px;">超卖区</span>
+                    <span style="position: absolute; right: 10%;">100</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #7f8c8d;">
+                    <span>极度超卖 0-20</span>
+                    <span>超卖 20-40</span>
+                    <span>中性 40-60</span>
+                    <span>超买 60-80</span>
+                    <span>极度超买 80-100</span>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="kdjChart"></canvas>
+            </div>
+
+            <div class="signal-cards">
+                <div class="signal-card buy" style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);">
+                    <h5>✅ 底背离买入</h5>
+                    <p>股价创新低<br>KDJ没有创新低<br><strong>反弹概率大</strong></p>
+                </div>
+                <div class="signal-card sell" style="background: linear-gradient(135deg, #f39c12 0%, #d68910 100%);">
+                    <h5>⚠️ 顶背离卖出</h5>
+                    <p>股价创新高<br>KDJ没有创新高<br><strong>回调概率大</strong></p>
+                </div>
+                <div class="signal-card neutral">
+                    <h5>📗 二次金叉</h5>
+                    <p>低位两次金叉<br>信号更加可靠<br><strong>强烈买入</strong></p>
+                </div>
+                <div class="signal-card neutral">
+                    <h5>📕 二次死叉</h5>
+                    <p>高位两次死叉<br>信号更加可靠<br><strong>坚决卖出</strong></p>
+                </div>
+            </div>
+
+            <div class="tips-box">
+                <h4>💡 KDJ与MACD对比</h4>
+                <table class="comparison-table">
+                    <tr>
+                        <th>对比项</th>
+                        <th>KDJ</th>
+                        <th>MACD</th>
+                    </tr>
+                    <tr>
+                        <td>灵敏度</td>
+                        <td>极高，波动剧烈</td>
+                        <td>中等，较为平滑</td>
+                    </tr>
+                    <tr>
+                        <td>适用场景</td>
+                        <td>短线交易</td>
+                        <td>中线趋势</td>
+                    </tr>
+                    <tr>
+                        <td>信号频率</td>
+                        <td>较多，容易反复</td>
+                        <td>较少，更加稳定</td>
+                    </tr>
+                    <tr>
+                        <td>最佳用法</td>
+                        <td>超买超卖辅助判断</td>
+                        <td>趋势判断</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="tips-box">
+                <h4>📌 A股实战KDJ使用技巧</h4>
+                <p>
+                    <strong>1. 日线KDJ配合周线KDJ</strong><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;日线低位金叉 + 周线低位金叉 = 强烈买入信号<br><br>
+                    <strong>2. KDJ钝化处理</strong><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;单边行情中KDJ容易钝化，需结合其他指标<br><br>
+                    <strong>3. 与均线配合</strong><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;KDJ金叉 + 股价站上均线 = 买入确认<br><br>
+                    <strong>4. 参数调整</strong><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;短线：9,3,3 | 中线：19,9,9 | 长线：36,12,12
+                </p>
+            </div>
+
+            <div class="chapter-nav">
+                <h4>📖 相关章节</h4>
+                <ul>
+                    <li><strong>本章所属：</strong>第12章-技术分析入门</li>
+                    <li><strong>前置知识：</strong>第6章-股票交易基础、第12章-K线基础</li>
+                    <li><strong>延伸阅读：</strong>第12章-均线系统、第12章-MACD指标</li>
+                    <li><strong>实战应用：</strong>第15章-风险管理止损与投资心理</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const kdjCtx = document.getElementById('kdjChart').getContext('2d');
+        
+        function generateKDJData() {
+            const data = [];
+            const kValues = [50];
+            const dValues = [50];
+            let rsv = 50;
+            
+            for (let i = 0; i < 50; i++) {
+                rsv = Math.max(5, Math.min(95, rsv + (Math.random() - 0.5) * 40));
+                const k = 2/3 * (kValues[kValues.length - 1] || 50) + 1/3 * rsv;
+                const d = 2/3 * (dValues[dValues.length - 1] || 50) + 1/3 * k;
+                const j = 3 * k - 2 * d;
+                
+                kValues.push(k);
+                dValues.push(d);
+                data.push({ k, d, j, rsv });
+            }
+            return { kValues, dValues, data };
+        }
+        
+        const { kValues, dValues, data } = generateKDJData();
+        const priceData = data.map((_, i) => 100 + Math.sin(i * 0.3) * 20 + i * 0.5);
+
+        new Chart(kdjCtx, {
+            type: 'line',
+            data: {
+                labels: Array.from({length: 50}, (_, i) => `Day ${i+1}`),
+                datasets: [
+                    {
+                        label: 'K值',
+                        data: kValues.slice(1),
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4
+                    },
+                    {
+                        label: 'D值',
+                        data: dValues.slice(1),
+                        borderColor: '#e74c3c',
+                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'KDJ指标示意图',
+                        font: { size: 16, weight: 'bold' }
+                    },
+                    annotation: {
+                        annotations: {
+                            overbought: {
+                                type: 'line',
+                                yMin: 80,
+                                yMax: 80,
+                                borderColor: 'rgba(231, 76, 60, 0.5)',
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                label: { content: '超买区 80', enabled: true }
+                            },
+                            oversold: {
+                                type: 'line',
+                                yMin: 20,
+                                yMax: 20,
+                                borderColor: 'rgba(39, 174, 96, 0.5)',
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                label: { content: '超卖区 20', enabled: true }
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        min: 0,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'KDJ值'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

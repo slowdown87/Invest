@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CH11-02 PE与PB估值对比图</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "Microsoft YaHei", "SimHei", Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .chart-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .chart-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 3px solid #27ae60;
+            padding-bottom: 15px;
+        }
+        .valuation-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .valuation-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .valuation-card.pe { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); }
+        .valuation-card.pb { background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%); }
+        .valuation-card.peg { background: linear-gradient(135deg, #f39c12 0%, #d68910 100%); }
+        
+        .valuation-card h4 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            padding-bottom: 12px;
+        }
+        .valuation-card .formula {
+            background: rgba(255,255,255,0.2);
+            padding: 12px;
+            border-radius: 8px;
+            font-family: "Courier New", monospace;
+            margin: 10px 0;
+        }
+        .valuation-card .range {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        .valuation-card .range-item {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .valuation-card .range-item .value {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffd700;
+        }
+        .chart-container {
+            height: 400px;
+            margin: 20px 0;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .comparison-table th, .comparison-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        .comparison-table th {
+            background: #27ae60;
+            color: white;
+        }
+        .comparison-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-low { background: #d4edda; color: #155724; }
+        .badge-normal { background: #fff3cd; color: #856404; }
+        .badge-high { background: #f8d7da; color: #721c24; }
+        .highlight-box {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 12px 12px 0;
+        }
+        .highlight-box h4 {
+            color: #2980b9;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="chart-card">
+            <h1 class="chart-title">📊 A股估值方法对比图</h1>
+            
+            <div class="valuation-cards">
+                <div class="valuation-card pe">
+                    <h4>📈 市盈率（PE）</h4>
+                    <div class="formula">
+                        <strong>PE = 股价 / 每股收益（EPS）</strong><br>
+                        <small>或 = 总市值 / 净利润</small>
+                    </div>
+                    <div class="range">
+                        <div class="range-item">
+                            <div class="value">0-10</div>
+                            <small>极低/价值陷阱</small>
+                        </div>
+                        <div class="range-item">
+                            <div class="value">10-20</div>
+                            <small>较低/合理</small>
+                        </div>
+                        <div class="range-item">
+                            <div class="value">20-40</div>
+                            <small>正常</small>
+                        </div>
+                        <div class="range-item">
+                            <div class="value">40+</div>
+                            <small>较高/高估</small>
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; font-size: 14px;">
+                        <strong>适用：</strong>盈利稳定的成熟企业<br>
+                        <strong>局限性：</strong>不适用亏损企业
+                    </p>
+                </div>
+
+                <div class="valuation-card pb">
+                    <h4>📉 市净率（PB）</h4>
+                    <div class="formula">
+                        <strong>PB = 股价 / 每股净资产（BPS）</strong><br>
+                        <small>或 = 总市值 / 净资产</small>
+                    </div>
+                    <div class="range">
+                        <div class="range-item">
+                            <div class="value"><1</div>
+                            <small>破净/低估</small>
+                        </div>
+                        <div class="range-item">
+                            <div class="value">1-3</div>
+                            <small>正常</small>
+                        </div>
+                        <div class="range-item">
+                            <div class="value">3-5</div>
+                            <small>溢价</small>
+                        </div>
+                        <div class="range-item">
+                            <div class="value">5+</div>
+                            <small>高溢价</small>
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; font-size: 14px;">
+                        <strong>适用：</strong>金融、周期、资产型企业<br>
+                        <strong>局限性：</strong>轻资产企业不适用
+                    </p>
+                </div>
+
+                <div class="valuation-card peg">
+                    <h4>⚖️ PEG估值</h4>
+                    <div class="formula">
+                        <strong>PEG = PE / 净利润增长率（G）</strong><br>
+                        <small>或 = 市盈率 / (净利润增速 × 100)</small>
+                    </div>
+                    <div class="range">
+                        <div class="range-item">
+                            <div class="value"><0.5</div>
+                            <small>极低/低估</small>
+                        </div>
+                        <div class="range-item">
+                            <div class="value">0.5-1</div>
+                            <small>合理</small>
+                        </div>
+                        <div class="range-item">
+                            <div class="value">1-2</div>
+                            <small>略高</small>
+                        </div>
+                        <div class="range-item">
+                            <div class="value">>2</div>
+                            <small>高估/泡沫</small>
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; font-size: 14px;">
+                        <strong>适用：</strong>成长型企业<br>
+                        <strong>局限性：</strong>增速难以预测
+                    </p>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="pePbChart"></canvas>
+            </div>
+
+            <table class="comparison-table">
+                <tr>
+                    <th>公司</th>
+                    <th>行业</th>
+                    <th>PE（倍）</th>
+                    <th>PB（倍）</th>
+                    <th>净利润增速</th>
+                    <th>PEG</th>
+                    <th>估值评价</th>
+                </tr>
+                <tr>
+                    <td>贵州茅台</td>
+                    <td>白酒</td>
+                    <td>30</td>
+                    <td>12</td>
+                    <td>18%</td>
+                    <td>1.67</td>
+                    <td><span class="status-badge badge-normal">合理偏高</span></td>
+                </tr>
+                <tr>
+                    <td>宁德时代</td>
+                    <td>新能源</td>
+                    <td>25</td>
+                    <td>4.5</td>
+                    <td>45%</td>
+                    <td>0.56</td>
+                    <td><span class="status-badge badge-low">合理低估</span></td>
+                </tr>
+                <tr>
+                    <td>中国平安</td>
+                    <td>保险</td>
+                    <td>8</td>
+                    <td>0.8</td>
+                    <td>5%</td>
+                    <td>1.6</td>
+                    <td><span class="status-badge badge-low">破净低估</span></td>
+                </tr>
+                <tr>
+                    <td>中芯国际</td>
+                    <td>芯片</td>
+                    <td>100</td>
+                    <td>3.5</td>
+                    <td>-30%</td>
+                    <td>N/A</td>
+                    <td><span class="status-badge badge-high">亏损高估</span></td>
+                </tr>
+                <tr>
+                    <td>招商银行</td>
+                    <td>银行</td>
+                    <td>7</td>
+                    <td>1.2</td>
+                    <td>10%</td>
+                    <td>0.7</td>
+                    <td><span class="status-badge badge-low">低估</span></td>
+                </tr>
+            </table>
+
+            <div class="highlight-box">
+                <h4>💡 A股估值使用技巧</h4>
+                <p>
+                    <strong>1. 行业对比法</strong><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;同行业公司对比，PE/PB处于低位往往是买入机会<br><br>
+                    
+                    <strong>2. 历史分位法</strong><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;当前PE处于历史10%分位以下，往往是低估信号<br><br>
+                    
+                    <strong>3. 综合判断</strong><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;PE+PB+PEG综合使用，结合行业特性选择合适指标<br><br>
+                    
+                    <strong>4. 成长性考虑</strong><br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;高成长行业可以接受更高PE，但要注意增速真实性
+                </p>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h2 class="chart-title" style="font-size: 20px;">📊 A股主要指数PE估值分位对比</h2>
+            <div class="chart-container">
+                <canvas id="indexPeChart"></canvas>
+            </div>
+            <table class="comparison-table">
+                <tr>
+                    <th>指数</th>
+                    <th>当前PE</th>
+                    <th>历史最低</th>
+                    <th>历史中位</th>
+                    <th>历史最高</th>
+                    <th>分位</th>
+                    <th>估值状态</th>
+                </tr>
+                <tr>
+                    <td>沪深300</td>
+                    <td>12.5</td>
+                    <td>8</td>
+                    <td>14</td>
+                    <td>30</td>
+                    <td>约35%</td>
+                    <td><span class="status-badge badge-low">偏低</span></td>
+                </tr>
+                <tr>
+                    <td>中证500</td>
+                    <td>22</td>
+                    <td>15</td>
+                    <td>32</td>
+                    <td>80</td>
+                    <td>约20%</td>
+                    <td><span class="status-badge badge-low">低估</span></td>
+                </tr>
+                <tr>
+                    <td>创业板指</td>
+                    <td>35</td>
+                    <td>25</td>
+                    <td>50</td>
+                    <td>140</td>
+                    <td>约15%</td>
+                    <td><span class="status-badge badge-low">偏低</span></td>
+                </tr>
+                <tr>
+                    <td>上证指数</td>
+                    <td>13</td>
+                    <td>9</td>
+                    <td>15</td>
+                    <td>69</td>
+                    <td>约30%</td>
+                    <td><span class="status-badge badge-low">偏低</span></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const pePbCtx = document.getElementById('pePbChart').getContext('2d');
+        new Chart(pePbCtx, {
+            type: 'scatter',
+            data: {
+                datasets: [
+                    {
+                        label: '低估区',
+                        data: [
+                            {x: 8, y: 1.0}, {x: 10, y: 1.2}, {x: 12, y: 0.8}, {x: 7, y: 1.5}, {x: 9, y: 2.0}
+                        ],
+                        backgroundColor: 'rgba(39, 174, 96, 0.3)',
+                        pointRadius: 0
+                    },
+                    {
+                        label: '合理区',
+                        data: [
+                            {x: 15, y: 2.0}, {x: 20, y: 3.0}, {x: 18, y: 2.5}, {x: 22, y: 3.5}, {x: 25, y: 4.0}
+                        ],
+                        backgroundColor: 'rgba(243, 156, 18, 0.3)',
+                        pointRadius: 0
+                    },
+                    {
+                        label: '高估区',
+                        data: [
+                            {x: 35, y: 5.0}, {x: 40, y: 6.0}, {x: 50, y: 8.0}, {x: 60, y: 10.0}, {x: 45, y: 7.0}
+                        ],
+                        backgroundColor: 'rgba(231, 76, 60, 0.3)',
+                        pointRadius: 0
+                    },
+                    {
+                        label: '贵州茅台',
+                        data: [{x: 30, y: 12}],
+                        backgroundColor: '#e74c3c',
+                        pointRadius: 10
+                    },
+                    {
+                        label: '宁德时代',
+                        data: [{x: 25, y: 4.5}],
+                        backgroundColor: '#3498db',
+                        pointRadius: 10
+                    },
+                    {
+                        label: '中国平安',
+                        data: [{x: 8, y: 0.8}],
+                        backgroundColor: '#27ae60',
+                        pointRadius: 10
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'A股上市公司PE-PB估值分布图',
+                        font: { size: 16, weight: 'bold' }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': PE=' + context.raw.x + ', PB=' + context.raw.y;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: '市盈率（PE）'
+                        },
+                        min: 0,
+                        max: 70
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: '市净率（PB）'
+                        },
+                        min: 0,
+                        max: 15
+                    }
+                }
+            }
+        });
+
+        const indexPeCtx = document.getElementById('indexPeChart').getContext('2d');
+        new Chart(indexPeCtx, {
+            type: 'bar',
+            data: {
+                labels: ['沪深300', '中证500', '创业板指', '上证指数', '科创50', '红利指数'],
+                datasets: [
+                    {
+                        label: '当前PE',
+                        data: [12.5, 22, 35, 13, 45, 7],
+                        backgroundColor: '#3498db'
+                    },
+                    {
+                        label: '历史中位PE',
+                        data: [14, 32, 50, 15, 60, 9],
+                        backgroundColor: '#95a5a6'
+                    },
+                    {
+                        label: '历史最高PE',
+                        data: [30, 80, 140, 69, 120, 25],
+                        backgroundColor: '#e74c3c'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'A股主要指数PE估值对比',
+                        font: { size: 16, weight: 'bold' }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: '市盈率（倍）'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

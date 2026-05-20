@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CH02-04 现金流量表流向图</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "Microsoft YaHei", "SimHei", Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .chart-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .chart-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 3px solid #9b59b6;
+            padding-bottom: 15px;
+        }
+        .cash-flow-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 30px;
+        }
+        .flow-section {
+            width: 100%;
+            max-width: 900px;
+        }
+        .flow-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px 12px 0 0;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .flow-header.operating { background: linear-gradient(135deg, #27ae60 0%, #1e8449 100%); }
+        .flow-header.investing { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
+        .flow-header.financing { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); }
+        .flow-header.total { background: linear-gradient(135deg, #f39c12 0%, #d68910 100%); }
+
+        .flow-content {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 0 0 12px 12px;
+            border: 2px solid #ddd;
+            border-top: none;
+        }
+        .flow-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+        .flow-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .flow-item .icon {
+            font-size: 24px;
+        }
+        .flow-item .text {
+            flex: 1;
+            font-size: 14px;
+        }
+        .flow-item .amount {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .positive { color: #27ae60; }
+        .negative { color: #e74c3c; }
+        .arrow-down {
+            text-align: center;
+            font-size: 30px;
+            color: #95a5a6;
+            margin: 10px 0;
+        }
+        .formula-box {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 12px 12px 0;
+        }
+        .formula-box h4 {
+            color: #2980b9;
+            margin-bottom: 15px;
+        }
+        .formula-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: white;
+            margin: 8px 0;
+            border-radius: 8px;
+        }
+        .chart-container {
+            height: 400px;
+            margin: 20px 0;
+        }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .comparison-table th, .comparison-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .comparison-table th {
+            background: #9b59b6;
+            color: white;
+            font-weight: bold;
+        }
+        .comparison-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-healthy { background: #d4edda; color: #155724; }
+        .badge-warning { background: #fff3cd; color: #856404; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+        .case-analysis {
+            background: #fff3cd;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .case-analysis h4 {
+            color: #856404;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="chart-card">
+            <h1 class="chart-title">💰 现金流量表流向图</h1>
+            
+            <div class="cash-flow-diagram">
+                <div class="flow-section">
+                    <div class="flow-header operating">
+                        <span>一、经营活动现金流（Operating Activities）</span>
+                        <span class="status-badge badge-healthy">企业造血能力</span>
+                    </div>
+                    <div class="flow-content">
+                        <div class="flow-items">
+                            <div class="flow-item">
+                                <span class="icon">📥</span>
+                                <span class="text">销售商品、提供劳务收到的现金</span>
+                                <span class="amount positive">+1000万</span>
+                            </div>
+                            <div class="flow-item">
+                                <span class="icon">📤</span>
+                                <span class="text">购买商品、接受劳务支付的现金</span>
+                                <span class="amount negative">-600万</span>
+                            </div>
+                            <div class="flow-item">
+                                <span class="icon">👥</span>
+                                <span class="text">支付给职工的现金</span>
+                                <span class="amount negative">-150万</span>
+                            </div>
+                            <div class="flow-item">
+                                <span class="icon">🏛️</span>
+                                <span class="text">支付的各项税费</span>
+                                <span class="amount negative">-100万</span>
+                            </div>
+                            <div class="flow-item" style="background: #d4edda; grid-column: 1 / -1;">
+                                <span class="icon">✅</span>
+                                <span class="text" style="font-weight: bold;">经营活动现金流净额</span>
+                                <span class="amount positive" style="font-size: 18px;">+150万</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="arrow-down">⬇️</div>
+
+                <div class="flow-section">
+                    <div class="flow-header investing">
+                        <span>二、投资活动现金流（Investing Activities）</span>
+                        <span class="status-badge badge-warning">企业未来投资</span>
+                    </div>
+                    <div class="flow-content">
+                        <div class="flow-items">
+                            <div class="flow-item">
+                                <span class="icon">🏭</span>
+                                <span class="text">购建固定资产、无形资产</span>
+                                <span class="amount negative">-200万</span>
+                            </div>
+                            <div class="flow-item">
+                                <span class="icon">💹</span>
+                                <span class="text">收回投资收到的现金</span>
+                                <span class="amount positive">+50万</span>
+                            </div>
+                            <div class="flow-item">
+                                <span class="icon">📈</span>
+                                <span class="text">取得投资收益收到的现金</span>
+                                <span class="amount positive">+20万</span>
+                            </div>
+                            <div class="flow-item" style="background: #fff3cd; grid-column: 1 / -1;">
+                                <span class="icon">⚠️</span>
+                                <span class="text" style="font-weight: bold;">投资活动现金流净额</span>
+                                <span class="amount negative" style="font-size: 18px;">-130万</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="arrow-down">⬇️</div>
+
+                <div class="flow-section">
+                    <div class="flow-header financing">
+                        <span>三、筹资活动现金流（Financing Activities）</span>
+                        <span class="status-badge badge-warning">企业融资能力</span>
+                    </div>
+                    <div class="flow-content">
+                        <div class="flow-items">
+                            <div class="flow-item">
+                                <span class="icon">🏦</span>
+                                <span class="text">取得借款收到的现金</span>
+                                <span class="amount positive">+100万</span>
+                            </div>
+                            <div class="flow-item">
+                                <span class="icon">💸</span>
+                                <span class="text">偿还债务支付的现金</span>
+                                <span class="amount negative">-50万</span>
+                            </div>
+                            <div class="flow-item">
+                                <span class="icon">💵</span>
+                                <span class="text">分配股利、利润支付的现金</span>
+                                <span class="amount negative">-30万</span>
+                            </div>
+                            <div class="flow-item" style="background: #d1ecf1; grid-column: 1 / -1;">
+                                <span class="icon">ℹ️</span>
+                                <span class="text" style="font-weight: bold;">筹资活动现金流净额</span>
+                                <span class="amount positive" style="font-size: 18px;">+20万</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="arrow-down">⬇️</div>
+
+                <div class="flow-section">
+                    <div class="flow-header total">
+                        <span>💵 现金及现金等价物净增加额</span>
+                        <span class="status-badge badge-healthy">最终结果</span>
+                    </div>
+                    <div class="flow-content" style="background: #fff3cd; border-color: #ffc107;">
+                        <div style="text-align: center; padding: 20px;">
+                            <div style="font-size: 36px; font-weight: bold; color: #27ae60;">
+                                +40万元
+                            </div>
+                            <div style="margin-top: 10px; color: #7f8c8d;">
+                                150万（经营）− 130万（投资） + 20万（筹资） = 40万
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="formula-box">
+                <h4>📊 现金流量表核心公式</h4>
+                <div class="formula-item">
+                    <span><strong>经营活动现金流净额</strong></span>
+                    <span>= 经营流入 − 经营流出</span>
+                </div>
+                <div class="formula-item">
+                    <span><strong>投资活动现金流净额</strong></span>
+                    <span>= 投资流入 − 投资流出</span>
+                </div>
+                <div class="formula-item">
+                    <span><strong>筹资活动现金流净额</strong></span>
+                    <span>= 筹资流入 − 筹资流出</span>
+                </div>
+                <div class="formula-item" style="background: #fff3cd;">
+                    <span><strong>现金净增加额</strong></span>
+                    <span>= 经营 + 投资 + 筹资</span>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="cashFlowChart"></canvas>
+            </div>
+
+            <div class="case-analysis">
+                <h4>📌 如何通过现金流判断企业质量</h4>
+                <table class="comparison-table">
+                    <tr>
+                        <th>现金流组合</th>
+                        <th>企业经营状态</th>
+                        <th>投资建议</th>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-healthy">✅ 经营+ 投资- 筹资-</span></td>
+                        <td>成熟期，现金牛，健康发展</td>
+                        <td>优质标的，关注分红能力</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-warning">⚠️ 经营+ 投资- 筹资+</span></td>
+                        <td>扩张期，积极投资</td>
+                        <td>分析投资方向和回报预期</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-danger">❌ 经营- 投资- 筹资+</span></td>
+                        <td>入不敷出，靠融资维持</td>
+                        <td>警惕！可能是资金链断裂前兆</td>
+                    </tr>
+                    <tr>
+                        <td><span class="badge-danger">❌ 经营- 投资+ 筹资+</span></td>
+                        <td>主业亏损，卖资产+融资</td>
+                        <td>极度警惕！可能是衰落期</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h2 class="chart-title" style="font-size: 20px;">🏭 A股典型企业现金流特征</h2>
+            <div class="chart-container">
+                <canvas id="stockCashFlowChart"></canvas>
+            </div>
+            <table class="comparison-table">
+                <tr>
+                    <th>公司</th>
+                    <th>行业</th>
+                    <th>经营现金流</th>
+                    <th>投资现金流</th>
+                    <th>筹资现金流</th>
+                    <th>特征</th>
+                </tr>
+                <tr>
+                    <td>贵州茅台</td>
+                    <td>白酒</td>
+                    <td class="positive">✅ 极佳</td>
+                    <td class="negative">⚠️ 适度投资</td>
+                    <td class="negative">⚠️ 分红</td>
+                    <td>完美现金流，印钞机</td>
+                </tr>
+                <tr>
+                    <td>宁德时代</td>
+                    <td>新能源</td>
+                    <td class="positive">✅ 良好</td>
+                    <td class="negative">❌ 大量扩张</td>
+                    <td class="positive">✅ 融资</td>
+                    <td>扩张期，高投入高增长</td>
+                </tr>
+                <tr>
+                    <td>乐视退</td>
+                    <td>互联网</td>
+                    <td class="negative">❌ 很差</td>
+                    <td class="negative">❌ 激进</td>
+                    <td class="positive">✅ 大量融资</td>
+                    <td>典型失败案例</td>
+                </tr>
+                <tr>
+                    <td>中国平安</td>
+                    <td>保险</td>
+                    <td class="positive">✅ 良好</td>
+                    <td class="negative">⚠️ 投资为主</td>
+                    <td class="negative">⚠️ 分红+融资</td>
+                    <td>金融特性，现金流复杂</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const cashFlowCtx = document.getElementById('cashFlowChart').getContext('2d');
+        new Chart(cashFlowCtx, {
+            type: 'bar',
+            data: {
+                labels: ['销售回款', '采购支出', '人工支出', '税费支出', '设备投资', '分红支出'],
+                datasets: [
+                    {
+                        label: '现金流入',
+                        data: [1000, 0, 0, 0, 0, 0],
+                        backgroundColor: '#27ae60'
+                    },
+                    {
+                        label: '现金流出',
+                        data: [0, 600, 150, 100, 200, 30],
+                        backgroundColor: '#e74c3c'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '企业现金流量流入流出分布（单位：万元）',
+                        font: { size: 16, weight: 'bold' }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: '金额（万元）'
+                        }
+                    }
+                }
+            }
+        });
+
+        const stockCashFlowCtx = document.getElementById('stockCashFlowChart').getContext('2d');
+        new Chart(stockCashFlowCtx, {
+            type: 'bar',
+            data: {
+                labels: ['贵州茅台', '宁德时代', '中国平安', '招商银行'],
+                datasets: [
+                    {
+                        label: '经营活动现金流',
+                        data: [100, 80, 90, 85],
+                        backgroundColor: '#27ae60'
+                    },
+                    {
+                        label: '投资活动现金流',
+                        data: [-30, -120, -60, -40],
+                        backgroundColor: '#e74c3c'
+                    },
+                    {
+                        label: '筹资活动现金流',
+                        data: [-50, 60, -30, -45],
+                        backgroundColor: '#3498db'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'A股典型企业现金流特征对比（归一化指数）',
+                        font: { size: 16, weight: 'bold' }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: '现金流指数'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

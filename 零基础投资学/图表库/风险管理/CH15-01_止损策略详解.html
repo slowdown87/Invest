@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>止损策略详解 - 零基础投资学教程</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        h1 {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle { text-align: center; color: #aaa; margin-bottom: 30px; }
+        .section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+        .section-title {
+            font-size: 1.3rem;
+            color: #4facfe;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .chart-wrapper {
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        .strategy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .strategy-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 25px;
+            border-top: 4px solid;
+        }
+        .strategy-card:nth-child(1) { border-color: #f5576c; }
+        .strategy-card:nth-child(2) { border-color: #ff9f40; }
+        .strategy-card:nth-child(3) { border-color: #4facfe; }
+        .strategy-card:nth-child(4) { border-color: #43e97b; }
+        .strategy-card h4 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .strategy-card h4 .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+        .formula-box {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-family: 'Consolas', monospace;
+            text-align: center;
+        }
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .pros { background: rgba(67,233,123,0.2); padding: 10px; border-radius: 8px; }
+        .cons { background: rgba(255,107,107,0.2); padding: 10px; border-radius: 8px; }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .comparison-table th, .comparison-table td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .comparison-table th {
+            background: rgba(102,126,234,0.3);
+        }
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(245,87,108,0.3), rgba(240,147,251,0.3));
+            border-left: 4px solid #f5576c;
+            padding: 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 20px 0;
+        }
+        .signal-tag {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        .buy-tag { background: rgba(67,233,123,0.3); color: #43e97b; }
+        .sell-tag { background: rgba(255,107,107,0.3); color: #ff6b6b; }
+        .warning-tag { background: rgba(255,159,64,0.3); color: #ff9f40; }
+        .flow-steps {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .flow-step {
+            flex: 1;
+            min-width: 150px;
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .flow-step .number {
+            width: 30px;
+            height: 30px;
+            background: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+        }
+        .case-card {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .case-card h4 { color: #4facfe; margin-bottom: 10px; }
+        .case-card .result {
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ 止损策略详解</h1>
+        <p class="subtitle">止损是投资的保险——宁可小亏，不可大套</p>
+
+        <!-- 止损原理 -->
+        <div class="section">
+            <div class="section-title">📖 止损的核心原理</div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 20px 0;">
+                <div style="background: rgba(67,233,123,0.2); padding: 25px; border-radius: 16px; text-align: center;">
+                    <h4 style="color: #43e97b; margin-bottom: 10px;">截断亏损</h4>
+                    <p style="font-size: 2rem; margin: 15px 0;">-10%</p>
+                    <p>亏损10%时止损，只需盈利11%回本</p>
+                </div>
+                <div style="background: rgba(255,107,107,0.2); padding: 25px; border-radius: 16px; text-align: center;">
+                    <h4 style="color: #ff6b6b; margin-bottom: 10px;">放任不管</h4>
+                    <p style="font-size: 2rem; margin: 15px 0;">-50%</p>
+                    <p>亏损50%时，需要盈利100%才能回本！</p>
+                </div>
+                <div style="background: rgba(255,159,64,0.2); padding: 25px; border-radius: 16px; text-align: center;">
+                    <h4 style="color: #ff9f40; margin-bottom: 10px;">复利威力</h4>
+                    <p style="font-size: 2rem; margin: 15px 0;">-7次</p>
+                    <p>腰斩后需要连续7次涨停才能回本</p>
+                </div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="stopLossChart" height="80"></canvas>
+            </div>
+        </div>
+
+        <!-- 四种止损方法 -->
+        <div class="section">
+            <div class="section-title">🎯 四种止损方法详解</div>
+            <div class="strategy-grid">
+                <div class="strategy-card">
+                    <h4><span class="icon" style="background: rgba(245,87,108,0.2);">📉</span> 固定比例止损</h4>
+                    <p style="color: #aaa; margin-bottom: 15px;">
+                        最简单的方法——亏损达到固定比例时止损
+                    </p>
+                    <div class="formula-box">
+                        <p>买入价 - (买入价 × 止损比例)</p>
+                        <p style="margin-top: 10px; color: #4facfe;">
+                            例如：买入10元，止损10% → 9元止损
+                        </p>
+                    </div>
+                    <div class="pros-cons">
+                        <div class="pros">
+                            <strong>优点</strong><br>
+                            简单易执行<br>
+                            量化明确
+                        </div>
+                        <div class="cons">
+                            <strong>缺点</strong><br>
+                            忽略个股波动<br>
+                            可能被洗出
+                        </div>
+                    </div>
+                    <div style="background: rgba(79,172,254,0.2); padding: 10px; border-radius: 8px;">
+                        <p><strong>推荐止损比例：</strong></p>
+                        <p>大盘股：8-10%</p>
+                        <p>中小盘：10-15%</p>
+                        <p>题材股：15-20%</p>
+                    </div>
+                </div>
+
+                <div class="strategy-card">
+                    <h4><span class="icon" style="background: rgba(255,159,64,0.2);">📊</span> 均线止损</h4>
+                    <p style="color: #aaa; margin-bottom: 15px;">
+                        跌破重要均线时止损——趋势投资者最爱
+                    </p>
+                    <div class="formula-box">
+                        <p>收盘价 < MA(20) 或 MA(60)</p>
+                        <p style="margin-top: 10px; color: #4facfe;">
+                            有效跌破20日均线 → 止损
+                        </p>
+                    </div>
+                    <div class="pros-cons">
+                        <div class="pros">
+                            <strong>优点</strong><br>
+                            跟随趋势<br>
+                            动态调整
+                        </div>
+                        <div class="cons">
+                            <strong>缺点</strong><br>
+                            震荡市频繁止损<br>
+                            滞后性
+                        </div>
+                    </div>
+                    <div style="background: rgba(79,172,254,0.2); padding: 10px; border-radius: 8px;">
+                        <p><strong>建议均线组合：</strong></p>
+                        <p>短线：MA5/MA10</p>
+                        <p>中线：MA20</p>
+                        <p>长线：MA60</p>
+                    </div>
+                </div>
+
+                <div class="strategy-card">
+                    <h4><span class="icon" style="background: rgba(79,172,254,0.2);">🔧</span> 支撑位止损</h4>
+                    <p style="color: #aaa; margin-bottom: 15px;">
+                        跌破关键支撑位时止损——技术分析派
+                    </p>
+                    <div class="formula-box">
+                        <p>有效跌破前期低点/平台</p>
+                        <p style="margin-top: 10px; color: #4facfe;">
+                            放量跌破颈线 → 止损
+                        </p>
+                    </div>
+                    <div class="pros-cons">
+                        <div class="pros">
+                            <strong>优点</strong><br>
+                            有明确参考点<br>
+                            技术信号清晰
+                        </div>
+                        <div class="cons">
+                            <strong>缺点</strong><br>
+                            需要技术分析能力<br>
+                            支撑位可能失效
+                        </div>
+                    </div>
+                    <div style="background: rgba(79,172,254,0.2); padding: 10px; border-radius: 8px;">
+                        <p><strong>关键支撑位：</strong></p>
+                        <p>前期低点</p>
+                        <p>成交密集区</p>
+                        <p>颈线位置</p>
+                    </div>
+                </div>
+
+                <div class="strategy-card">
+                    <h4><span class="icon" style="background: rgba(67,233,123,0.2);">📈</span> 移动止损</h4>
+                    <p style="color: #aaa; margin-bottom: 15px;">
+                        跟随利润上涨，不断提高止损点——让利润奔跑
+                    </p>
+                    <div class="formula-box">
+                        <p>止损点 = 最高价 - 回撤比例</p>
+                        <p style="margin-top: 10px; color: #4facfe;">
+                            最高点回落8% → 止损
+                        </p>
+                    </div>
+                    <div class="pros-cons">
+                        <div class="pros">
+                            <strong>优点</strong><br>
+                            锁定利润<br>
+                            持有大牛股
+                        </div>
+                        <div class="cons">
+                            <strong>缺点</strong><br>
+                            可能卖飞<br>
+                            需要耐心
+                        </div>
+                    </div>
+                    <div style="background: rgba(79,172,254,0.2); padding: 10px; border-radius: 8px;">
+                        <p><strong>回撤比例：</strong></p>
+                        <p>稳健派：10-15%</p>
+                        <p>激进派：8-10%</p>
+                        <p>移动止损不适用于短线</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 止损对比表 -->
+        <div class="section">
+            <div class="section-title">📋 四种止损方法对比</div>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>止损方法</th>
+                        <th>适用场景</th>
+                        <th>优点</th>
+                        <th>缺点</th>
+                        <th>难度</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>固定比例</strong></td>
+                        <td>短线/超短线</td>
+                        <td>简单易执行</td>
+                        <td>忽略个股特性</td>
+                        <td>⭐ 简单</td>
+                    </tr>
+                    <tr>
+                        <td><strong>均线止损</strong></td>
+                        <td>趋势交易</td>
+                        <td>跟随趋势</td>
+                        <td>震荡市频繁止损</td>
+                        <td>⭐⭐ 中等</td>
+                    </tr>
+                    <tr>
+                        <td><strong>支撑位止损</strong></td>
+                        <td>技术分析</td>
+                        <td>信号明确</td>
+                        <td>需一定技术基础</td>
+                        <td>⭐⭐⭐ 较难</td>
+                    </tr>
+                    <tr>
+                        <td><strong>移动止损</strong></td>
+                        <td>中长线/大牛股</td>
+                        <td>锁定利润</td>
+                        <td>可能卖飞</td>
+                        <td>⭐⭐ 中等</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 仓位管理 -->
+        <div class="section">
+            <div class="section-title">💼 仓位管理与止损配合</div>
+            <div class="chart-wrapper">
+                <canvas id="positionChart" height="80"></canvas>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+                <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; text-align: center;">
+                    <h4 style="color: #4facfe;">金字塔买入</h4>
+                    <p style="margin-top: 10px;">买1 → 买2 → 买3</p>
+                    <p style="margin-top: 5px;">越跌越买，但每份更少</p>
+                </div>
+                <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; text-align: center;">
+                    <h4 style="color: #f5576c;">倒金字塔止损</h4>
+                    <p style="margin-top: 10px;">卖3 → 卖2 → 卖1</p>
+                    <p style="margin-top: 5px;">越涨越卖，锁定利润</p>
+                </div>
+                <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; text-align: center;">
+                    <h4 style="color: #43e97b;">分批止损</h4>
+                    <p style="margin-top: 10px;">跌5%卖1/3 → 再跌卖1/3</p>
+                    <p style="margin-top: 5px;">避免一次卖在最低</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 执行要点 -->
+        <div class="section">
+            <div class="section-title">⚡ 止损执行要点</div>
+            <div class="flow-steps">
+                <div class="flow-step">
+                    <div class="number">1</div>
+                    <p><strong>买入前设定止损</strong></p>
+                    <p style="font-size: 0.85rem; color: #aaa; margin-top: 5px;">先定止损后买入</p>
+                </div>
+                <div class="flow-step">
+                    <div class="number">2</div>
+                    <p><strong>严格遵守纪律</strong></p>
+                    <p style="font-size: 0.85rem; color: #aaa; margin-top: 5px;">到了就执行</p>
+                </div>
+                <div class="flow-step">
+                    <div class="number">3</div>
+                    <p><strong>不要临时改止损</strong></p>
+                    <p style="font-size: 0.85rem; color: #aaa; margin-top: 5px;">扩大止损是大忌</p>
+                </div>
+                <div class="flow-step">
+                    <div class="number">4</div>
+                    <p><strong>记录止损原因</strong></p>
+                    <p style="font-size: 0.85rem; color: #aaa; margin-top: 5px;">事后复盘总结</p>
+                </div>
+            </div>
+            <div class="highlight-box">
+                <h4 style="margin-bottom: 15px;">⚠️ 止损常见错误</h4>
+                <p>❌ <strong>犹豫不决</strong>：跌了想等等反弹再卖，结果越等越跌</p>
+                <p>❌ <strong>扩大止损</strong>：亏了10%想"再等等"，结果亏到30%</p>
+                <p>❌ <strong>提前止损</strong>：刚跌破止损又涨回来，被洗出去</p>
+                <p>❌ <strong>不止损死扛</strong>：坚信"只是暂时亏损"，结果越亏越多</p>
+            </div>
+        </div>
+
+        <!-- 案例 -->
+        <div class="section">
+            <div class="section-title">📊 止损案例分析</div>
+            <div class="case-card">
+                <h4>案例1：茅台止损 vs 不止损</h4>
+                <p>假设2018年茅台股价从800元跌到500元（-37.5%）：</p>
+                <div class="result" style="color: #ff6b6b;">
+                    不止损：需要从500涨回800，涨幅60%才能回本！
+                </div>
+                <div class="result" style="color: #43e97b;">
+                    止损后买入：800跌到720止损（-10%），等跌到500时买入，只需涨33%就超过原来
+                </div>
+            </div>
+            <div class="case-card">
+                <h4>案例2：乐视网的悲剧</h4>
+                <p>2015年乐视最高179元，如果你不止损：</p>
+                <div class="result" style="color: #ff6b6b;">
+                    持有到退市：亏损99.98%！100万只剩500元！
+                </div>
+                <div class="result" style="color: #43e97b;">
+                    设定15%止损：179跌到152止损，保留85万本金
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>📚 零基础投资学教程 | 图表库-风险管理-CH15-01</p>
+            <p>注：止损是纪律，执行比方法更重要</p>
+        </div>
+    </div>
+
+    <script>
+        Chart.defaults.color = '#fff';
+
+        // 止损回本难度
+        new Chart(document.getElementById('stopLossChart'), {
+            type: 'bar',
+            data: {
+                labels: ['亏损10%', '亏损20%', '亏损30%', '亏损40%', '亏损50%', '亏损70%'],
+                datasets: [{
+                    label: '亏损幅度',
+                    data: [10, 20, 30, 40, 50, 70],
+                    backgroundColor: 'rgba(255,107,107,0.7)'
+                }, {
+                    label: '回本需要涨幅',
+                    data: [11, 25, 43, 67, 100, 233],
+                    backgroundColor: 'rgba(67,233,123,0.7)'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: {
+                        display: true,
+                        text: '亏损与回本难度对比（%）'
+                    }
+                },
+                scales: {
+                    y: {
+                        grid: { color: 'rgba(255,255,255,0.1)' },
+                        ticks: { callback: v => v + '%' }
+                    },
+                    x: { grid: { color: 'rgba(255,255,255,0.1)' } }
+                }
+            }
+        });
+
+        // 仓位管理
+        new Chart(document.getElementById('positionChart'), {
+            type: 'bar',
+            data: {
+                labels: ['初始建仓', '下跌10%', '下跌20%', '下跌30%'],
+                datasets: [{
+                    label: '金字塔买入（每份金额）',
+                    data: [10000, 8000, 6000, 4000],
+                    backgroundColor: 'rgba(79,172,254,0.7)'
+                }, {
+                    label: '固定金额买入（每份金额）',
+                    data: [10000, 10000, 10000, 10000],
+                    backgroundColor: 'rgba(67,233,123,0.7)'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' }
+                },
+                scales: {
+                    y: {
+                        grid: { color: 'rgba(255,255,255,0.1)' },
+                        title: { display: true, text: '买入金额（元）' }
+                    },
+                    x: {
+                        grid: { color: 'rgba(255,255,255,0.1)' },
+                        title: { display: true, text: '买入时机' }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

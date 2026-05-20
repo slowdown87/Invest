@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>估值方法对比 - 零基础投资学教程</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        h1 {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle { text-align: center; color: #aaa; margin-bottom: 30px; }
+        .section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+        .section-title {
+            font-size: 1.3rem;
+            color: #4facfe;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .chart-wrapper {
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .method-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 25px;
+            border-top: 4px solid;
+        }
+        .method-card:nth-child(1) { border-color: #f5576c; }
+        .method-card:nth-child(2) { border-color: #4facfe; }
+        .method-card:nth-child(3) { border-color: #43e97b; }
+        .method-card:nth-child(4) { border-color: #ffce56; }
+        .method-card:nth-child(5) { border-color: #a855f7; }
+        .method-card h4 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .formula-box {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-family: 'Consolas', monospace;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .pros { background: rgba(67,233,123,0.2); padding: 10px; border-radius: 8px; }
+        .cons { background: rgba(255,107,107,0.2); padding: 10px; border-radius: 8px; }
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .comparison-table th, .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .comparison-table th {
+            background: rgba(102,126,234,0.3);
+        }
+        .comparison-table tr:nth-child(even) {
+            background: rgba(255,255,255,0.02);
+        }
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(102,126,234,0.3), rgba(118,75,162,0.3));
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        .highlight-box h4 { margin-bottom: 10px; }
+        .highlight-box p { line-height: 1.8; }
+        .case-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .case-card {
+            background: rgba(0,0,0,0.3);
+            border-radius: 16px;
+            padding: 20px;
+        }
+        .case-card h4 { color: #f5576c; margin-bottom: 15px; }
+        .case-card .value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4facfe;
+            margin: 10px 0;
+        }
+        .case-card .verdict {
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            text-align: center;
+        }
+        .case-card .verdict.cheap { background: rgba(67,233,123,0.3); color: #43e97b; }
+        .case-card .verdict.expensive { background: rgba(255,107,107,0.3); color: #ff6b6b; }
+        .case-card .verdict.neutral { background: rgba(255,206,86,0.3); color: #ffce56; }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 估值方法对比图</h1>
+        <p class="subtitle">学会估值，才能判断股价是贵还是便宜</p>
+
+        <!-- 估值方法一览 -->
+        <div class="section">
+            <div class="section-title">📖 五种主要估值方法</div>
+            <div class="method-grid">
+                <div class="method-card">
+                    <h4>📈 市盈率（PE）</h4>
+                    <div class="formula-box">
+                        PE = 股价 ÷ 每股收益<br>
+                        <span style="font-size: 0.9rem; color: #aaa;">或 总市值 ÷ 净利润</span>
+                    </div>
+                    <p style="font-size: 0.9rem; color: #aaa; margin: 10px 0;">
+                        最常用的估值指标，反映回本年限
+                    </p>
+                    <div class="pros-cons">
+                        <div class="pros">
+                            <strong>优点</strong><br>
+                            简单直观<br>
+                            易于理解
+                        </div>
+                        <div class="cons">
+                            <strong>缺点</strong><br>
+                            受盈利波动影响大<br>
+                            不适合亏损公司
+                        </div>
+                    </div>
+                    <p style="font-size: 0.85rem; color: #aaa;">
+                        <strong>适用：</strong>稳定盈利的成熟企业
+                    </p>
+                </div>
+
+                <div class="method-card">
+                    <h4>📉 市净率（PB）</h4>
+                    <div class="formula-box">
+                        PB = 股价 ÷ 每股净资产<br>
+                        <span style="font-size: 0.9rem; color: #aaa;">或 总市值 ÷ 净资产</span>
+                    </div>
+                    <p style="font-size: 0.9rem; color: #aaa; margin: 10px 0;">
+                        衡量股价相对于账面价值的溢价
+                    </p>
+                    <div class="pros-cons">
+                        <div class="pros">
+                            <strong>优点</strong><br>
+                            比PE稳定<br>
+                            适合金融股
+                        </div>
+                        <div class="cons">
+                            <strong>缺点</strong><br>
+                            忽略无形资产<br>
+                            不适合轻资产公司
+                        </div>
+                    </div>
+                    <p style="font-size: 0.85rem; color: #aaa;">
+                        <strong>适用：</strong>银行、保险、券商、钢铁
+                    </p>
+                </div>
+
+                <div class="method-card">
+                    <h4>💰 股息率</h4>
+                    <div class="formula-box">
+                        股息率 = 年度分红 ÷ 股价 × 100%
+                    </div>
+                    <p style="font-size: 0.9rem; color: #aaa; margin: 10px 0;">
+                        衡量现金回报的重要指标
+                    </p>
+                    <div class="pros-cons">
+                        <div class="pros">
+                            <strong>优点</strong><br>
+                            衡量真实现金回报<br>
+                            适合价值投资者
+                        </div>
+                        <div class="cons">
+                            <strong>缺点</strong><br>
+                            高股息可能陷阱<br>
+                            忽略成长性
+                        </div>
+                    </div>
+                    <p style="font-size: 0.85rem; color: #aaa;">
+                        <strong>适用：</strong>高分红稳健型股票
+                    </p>
+                </div>
+
+                <div class="method-card">
+                    <h4>📊 PEG估值</h4>
+                    <div class="formula-box">
+                        PEG = PE ÷ 净利润增长率<br>
+                        <span style="font-size: 0.9rem; color: #aaa;">PEG < 1 有成长性</span>
+                    </div>
+                    <p style="font-size: 0.9rem; color: #aaa; margin: 10px 0;">
+                        PE结合成长性，综合评估
+                    </p>
+                    <div class="pros-cons">
+                        <div class="pros">
+                            <strong>优点</strong><br>
+                            考虑成长性<br>
+                            相对全面
+                        </div>
+                        <div class="cons">
+                            <strong>缺点</strong><br>
+                            增长率难预测<br>
+                            行业差异大
+                        </div>
+                    </div>
+                    <p style="font-size: 0.85rem; color: #aaa;">
+                        <strong>适用：</strong>成长股估值
+                    </p>
+                </div>
+
+                <div class="method-card">
+                    <h4>💎 DCF现金流折现</h4>
+                    <div class="formula-box">
+                        内在价值 = Σ CFt / (1+r)<sup>t</sup><br>
+                        <span style="font-size: 0.9rem; color: #aaa;">未来现金流折现</span>
+                    </div>
+                    <p style="font-size: 0.9rem; color: #aaa; margin: 10px 0;">
+                        理论上最准确的估值方法
+                    </p>
+                    <div class="pros-cons">
+                        <div class="pros">
+                            <strong>优点</strong><br>
+                            理论上最准确<br>
+                            考虑时间价值
+                        </div>
+                        <div class="cons">
+                            <strong>缺点</strong><br>
+                            参数敏感度高<br>
+                            计算复杂
+                        </div>
+                    </div>
+                    <p style="font-size: 0.85rem; color: #aaa;">
+                        <strong>适用：</strong>专业投资者
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- PE估值分布 -->
+        <div class="section">
+            <div class="section-title">📈 A股主要指数PE估值分布</div>
+            <div class="chart-wrapper">
+                <canvas id="peChart" height="100"></canvas>
+            </div>
+            <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; margin-top: 20px;">
+                <h4 style="color: #4facfe; margin-bottom: 15px;">📊 估值参考标准</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <div style="text-align: center;">
+                        <p style="color: #43e97b;">🟢 PE < 15</p>
+                        <p style="font-size: 0.9rem; color: #aaa;">偏低估，可关注</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <p style="color: #ffce56;">🟡 PE 15-25</p>
+                        <p style="font-size: 0.9rem; color: #aaa;">合理区间</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <p style="color: #ff9f40;">🟠 PE 25-40</p>
+                        <p style="font-size: 0.9rem; color: #aaa;">偏高，需要业绩支撑</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <p style="color: #ff6b6b;">🔴 PE > 40</p>
+                        <p style="font-size: 0.9rem; color: #aaa;">高估，风险较大</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 方法对比表 -->
+        <div class="section">
+            <div class="section-title">📋 五种估值方法对比</div>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>方法</th>
+                        <th>适用场景</th>
+                        <th>优点</th>
+                        <th>缺点</th>
+                        <th>难度</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>PE（市盈率）</strong></td>
+                        <td>稳定盈利企业</td>
+                        <td>简单直观</td>
+                        <td>盈利波动影响大</td>
+                        <td>⭐ 简单</td>
+                    </tr>
+                    <tr>
+                        <td><strong>PB（市净率）</strong></td>
+                        <td>金融、资源类</td>
+                        <td>稳定可靠</td>
+                        <td>忽略无形资产</td>
+                        <td>⭐ 简单</td>
+                    </tr>
+                    <tr>
+                        <td><strong>股息率</strong></td>
+                        <td>高分红稳健股</td>
+                        <td>真实现金回报</td>
+                        <td>可能陷阱</td>
+                        <td>⭐ 简单</td>
+                    </tr>
+                    <tr>
+                        <td><strong>PEG</strong></td>
+                        <td>成长股</td>
+                        <td>考虑成长性</td>
+                        <td>增长率难预测</td>
+                        <td>⭐⭐ 中等</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DCF</strong></td>
+                        <td>所有企业</td>
+                        <td>理论最准确</td>
+                        <td>参数敏感</td>
+                        <td>⭐⭐⭐ 复杂</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 老唐估值法 -->
+        <div class="section">
+            <div class="section-title">📐 老唐估值法（简化DCF）</div>
+            <div class="highlight-box">
+                <h4>🎯 老唐估值法核心公式</h4>
+                <div class="formula-box" style="margin-top: 15px;">
+                    <p><strong>三年后合理市值</strong> = 当年净利润 × 合理PE × (1 + 增长率)<sup>3</sup></p>
+                    <p style="margin-top: 10px; font-size: 0.9rem;">
+                        买点 = 三年后合理市值 ÷ 2<br>
+                        卖点 = 三年后合理市值
+                    </p>
+                </div>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="tangChart" height="80"></canvas>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+                <div style="background: rgba(67,233,123,0.2); padding: 20px; border-radius: 12px; text-align: center;">
+                    <h4 style="color: #43e97b;">🟢 买点</h4>
+                    <p style="font-size: 1.5rem; margin: 10px 0;">合理市值 ÷ 2</p>
+                    <p style="font-size: 0.9rem; color: #aaa;">低估时买入</p>
+                </div>
+                <div style="background: rgba(255,206,86,0.2); padding: 20px; border-radius: 12px; text-align: center;">
+                    <h4 style="color: #ffce56;">🟡 持有</h4>
+                    <p style="font-size: 1.5rem; margin: 10px 0;">低估~合理</p>
+                    <p style="font-size: 0.9rem; color: #aaa;">耐心持有</p>
+                </div>
+                <div style="background: rgba(255,107,107,0.2); padding: 20px; border-radius: 12px; text-align: center;">
+                    <h4 style="color: #ff6b6b;">🔴 卖点</h4>
+                    <p style="font-size: 1.5rem; margin: 10px 0;">= 合理市值</p>
+                    <p style="font-size: 0.9rem; color: #aaa;">高估时分批卖</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- A股案例 -->
+        <div class="section">
+            <div class="section-title">🇨🇳 A股典型公司估值分析</div>
+            <div class="case-grid">
+                <div class="case-card">
+                    <h4>贵州茅台（600519）</h4>
+                    <p style="font-size: 0.9rem; color: #aaa;">高端白酒龙头</p>
+                    <div class="value">PE: 35倍 | 股息率: 1.5%</div>
+                    <div class="verdict expensive">
+                        ⚠️ PE偏高，但品牌护城河深厚
+                    </div>
+                </div>
+                <div class="case-card">
+                    <h4>长江电力（600900）</h4>
+                    <p style="font-size: 0.9rem; color: #aaa;">水电龙头</p>
+                    <div class="value">PE: 20倍 | 股息率: 3.5%</div>
+                    <div class="verdict neutral">
+                        ✓ 估值合理，高股息稳健
+                    </div>
+                </div>
+                <div class="case-card">
+                    <h4>中国神华（601088）</h4>
+                    <p style="font-size: 0.9rem; color: #aaa;">煤炭龙头</p>
+                    <div class="value">PE: 10倍 | 股息率: 5.5%</div>
+                    <div class="verdict cheap">
+                        ✅ 低估值+高股息，双重保障
+                    </div>
+                </div>
+                <div class="case-card">
+                    <h4>宁德时代（300750）</h4>
+                    <p style="font-size: 0.9rem; color: #aaa;">动力电池龙头</p>
+                    <div class="value">PE: 25倍 | PEG: 0.8</div>
+                    <div class="verdict neutral">
+                        ⚖️ 估值合理，成长性尚可
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 估值使用建议 -->
+        <div class="highlight-box">
+            <h4>🎯 估值使用建议</h4>
+            <p>1. <strong>多指标结合</strong>：不要只看一个指标，PE、PB、股息率结合使用</p>
+            <p>2. <strong>历史分位</strong>：对比历史估值，看当前处于什么位置</p>
+            <p>3. <strong>行业对比</strong>：同行业内对比，不同行业PE差异很大</p>
+            <p>4. <strong>成长性考虑</strong>：高成长可以支撑高PE，但要谨慎</p>
+            <p>5. <strong>周期因素</strong>：强周期股不适合用PE，要用PB</p>
+            <p>6. <strong>安全边际</strong>：即使估值合理，也要等低估时买入</p>
+        </div>
+
+        <div class="footer">
+            <p>📚 零基础投资学教程 | 图表库-估值分析-CH11-01</p>
+            <p>注：估值仅供参考，实际投资需综合考虑</p>
+        </div>
+    </div>
+
+    <script>
+        Chart.defaults.color = '#fff';
+
+        // PE估值分布
+        new Chart(document.getElementById('peChart'), {
+            type: 'bar',
+            data: {
+                labels: ['上证指数', '沪深300', '中证500', '创业板', '科创50', '红利指数'],
+                datasets: [{
+                    label: '当前PE',
+                    data: [13, 12, 24, 35, 45, 7],
+                    backgroundColor: ['#43e97b', '#43e97b', '#ffce56', '#ff6b6b', '#ff6b6b', '#43e97b']
+                }, {
+                    label: '历史中位数',
+                    data: [14, 13, 27, 42, 50, 9],
+                    backgroundColor: 'rgba(79,172,254,0.3)',
+                    borderColor: '#4facfe',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: {
+                        display: true,
+                        text: 'A股主要指数PE对比'
+                    }
+                },
+                scales: {
+                    y: {
+                        grid: { color: 'rgba(255,255,255,0.1)' },
+                        title: { display: true, text: '市盈率(PE)' }
+                    },
+                    x: { grid: { color: 'rgba(255,255,255,0.1)' } }
+                }
+            }
+        });
+
+        // 老唐估值法
+        new Chart(document.getElementById('tangChart'), {
+            type: 'line',
+            data: {
+                labels: ['第1年', '第2年', '第3年', '第4年'],
+                datasets: [{
+                    label: '股价',
+                    data: [50, 55, 60, 75],
+                    borderColor: '#4facfe',
+                    backgroundColor: 'rgba(79,172,254,0.1)',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: '买点（合理÷2）',
+                    data: [40, 44, 48, 53],
+                    borderColor: '#43e97b',
+                    borderDash: [5, 5],
+                    tension: 0.4
+                }, {
+                    label: '卖点（=合理市值）',
+                    data: [80, 88, 96, 105],
+                    borderColor: '#ff6b6b',
+                    borderDash: [5, 5],
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: {
+                        display: true,
+                        text: '老唐估值法示意图（股价走势）'
+                    }
+                },
+                scales: {
+                    y: {
+                        grid: { color: 'rgba(255,255,255,0.1)' },
+                        title: { display: true, text: '股价（元）' }
+                    },
+                    x: { grid: { color: 'rgba(255,255,255,0.1)' } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

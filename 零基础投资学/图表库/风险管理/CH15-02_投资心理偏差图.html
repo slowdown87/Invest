@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>投资心理偏差图 - 零基础投资学教程</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        h1 {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle { text-align: center; color: #aaa; margin-bottom: 30px; }
+        .intro-box {
+            background: linear-gradient(135deg, rgba(102,126,234,0.4), rgba(118,75,162,0.4));
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+        .section-title {
+            font-size: 1.3rem;
+            color: #4facfe;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .bias-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin: 20px 0;
+        }
+        .bias-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 25px;
+            border-left: 4px solid;
+            transition: transform 0.3s;
+        }
+        .bias-card:hover { transform: translateY(-5px); }
+        .bias-card:nth-child(odd) { border-color: #ff6b6b; }
+        .bias-card:nth-child(even) { border-color: #ff9f40; }
+        .bias-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .bias-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+        .bias-card:nth-child(odd) .bias-icon { background: rgba(255,107,107,0.3); }
+        .bias-card:nth-child(even) .bias-icon { background: rgba(255,159,64,0.3); }
+        .bias-title { font-size: 1.1rem; font-weight: bold; }
+        .bias-desc {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin: 15px 0;
+            line-height: 1.7;
+        }
+        .bias-example {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        .bias-example h5 {
+            color: #4facfe;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        .bias-example p { font-size: 0.85rem; line-height: 1.6; }
+        .solution {
+            background: rgba(67,233,123,0.2);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .solution strong { color: #43e97b; }
+        .solution p { font-size: 0.85rem; margin-top: 5px; }
+        .comparison-chart {
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        .flow-steps {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .flow-step {
+            flex: 1;
+            min-width: 200px;
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .flow-step .num {
+            width: 35px;
+            height: 35px;
+            background: #667eea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+        }
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(245,87,108,0.3), rgba(240,147,251,0.3));
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        .highlight-box h4 { margin-bottom: 10px; }
+        .highlight-box p { line-height: 1.8; }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 投资心理偏差图鉴</h1>
+        <p class="subtitle">识别并克服这些心理偏差，是成为合格投资者的必修课</p>
+
+        <div class="intro-box">
+            <p>
+                行为金融学研究表明：<strong style="color:#f5576c;">投资者最大的敌人不是市场，而是自己。</strong><br>
+                90%的投资失误源于心理偏差，而非分析错误。<br>
+                认识这些偏差，是克服它们的第一步。
+            </p>
+        </div>
+
+        <!-- 八大心理偏差 -->
+        <div class="section">
+            <div class="section-title">⚠️ 八大常见投资心理偏差</div>
+            <div class="bias-grid">
+                <div class="bias-card">
+                    <div class="bias-header">
+                        <div class="bias-icon">😰</div>
+                        <div class="bias-title">损失厌恶</div>
+                    </div>
+                    <p class="bias-desc">
+                        亏损的痛苦感是盈利快感的两倍。<br>
+                        亏1万的痛苦 ≈ 赚2万的快乐
+                    </p>
+                    <div class="bias-example">
+                        <h5>📍 典型表现</h5>
+                        <p>亏损时死扛不卖，盈利时小赚就跑</p>
+                        <p>结果：总是"小赢大亏"，长期亏损</p>
+                    </div>
+                    <div class="solution">
+                        <strong>✅ 解决方案</strong>
+                        <p>提前设定止损位，到点执行</p>
+                    </div>
+                </div>
+
+                <div class="bias-card">
+                    <div class="bias-header">
+                        <div class="bias-icon">⚓</div>
+                        <div class="bias-title">锚定效应</div>
+                    </div>
+                    <p class="bias-desc">
+                        过度依赖第一个获得的信息。<br>
+                        买入成本成为心理"锚点"
+                    </p>
+                    <div class="bias-example">
+                        <h5>📍 典型表现</h5>
+                        <p>"我30块买的，现在28，我不卖"</p>
+                        <p>股价已经低估，但因为锚定成本不愿卖或不敢买</p>
+                    </div>
+                    <div class="solution">
+                        <strong>✅ 解决方案</strong>
+                        <p>忘记成本，只看未来价值和当前价格</p>
+                    </div>
+                </div>
+
+                <div class="bias-card">
+                    <div class="bias-header">
+                        <div class="bias-icon">🎯</div>
+                        <div class="bias-title">确认偏误</div>
+                    </div>
+                    <p class="bias-desc">
+                        只寻找支持自己观点的信息。<br>
+                        自动忽略相反的证据
+                    </p>
+                    <div class="bias-example">
+                        <h5>📍 典型表现</h5>
+                        <p>买入后只看好消息，忽略坏消息</p>
+                        <p>"这只股票肯定没问题，你看这个利好..."</p>
+                    </div>
+                    <div class="solution">
+                        <strong>✅ 解决方案</strong>
+                        <p>主动寻找反对意见，定期检视持仓</p>
+                    </div>
+                </div>
+
+                <div class="bias-card">
+                    <div class="bias-header">
+                        <div class="bias-icon">💪</div>
+                        <div class="bias-title">过度自信</div>
+                    </div>
+                    <p class="bias-desc">
+                        高估自己的能力和判断准确性。<br>
+                        90%的司机认为自己驾驶水平高于平均
+                    </p>
+                    <div class="bias-example">
+                        <h5>📍 典型表现</h5>
+                        <p>"我觉得这只股票肯定涨"</p>
+                        <p>频繁交易，追逐热点，重仓单只股票</p>
+                    </div>
+                    <div class="solution">
+                        <strong>✅ 解决方案</strong>
+                        <p>分散投资，制定规则并严格执行</p>
+                    </div>
+                </div>
+
+                <div class="bias-card">
+                    <div class="bias-header">
+                        <div class="bias-icon">🐑</div>
+                        <div class="bias-title">羊群效应</div>
+                    </div>
+                    <p class="bias-desc">
+                        盲目跟随大众的行为和决策。<br>
+                        "大家都在买，我也买"
+                    </p>
+                    <div class="bias-example">
+                        <h5>📍 典型表现</h5>
+                        <p>2021年追高核心资产，2023年追高AI</p>
+                        <p>牛市顶点开户，熊市底部割肉</p>
+                    </div>
+                    <div class="solution">
+                        <strong>✅ 解决方案</strong>
+                        <p>独立思考，在别人恐惧时贪婪</p>
+                    </div>
+                </div>
+
+                <div class="bias-card">
+                    <div class="bias-header">
+                        <div class="bias-icon">📺</div>
+                        <div class="bias-title">近期偏误</div>
+                    </div>
+                    <p class="bias-desc">
+                        过度重视近期发生的事件。<br>
+                        最近的表现不代表未来
+                    </p>
+                    <div class="bias-example">
+                        <h5>📍 典型表现</h5>
+                        <p>看到某板块最近涨得好就追进去</p>
+                        <p>以为"强者恒强"，结果买在最高点</p>
+                    </div>
+                    <div class="solution">
+                        <strong>✅ 解决方案</strong>
+                        <p>拉长时间周期看问题，关注长期逻辑</p>
+                    </div>
+                </div>
+
+                <div class="bias-card">
+                    <div class="bias-header">
+                        <div class="bias-icon">🎰</div>
+                        <div class="bias-title">赌徒谬误</div>
+                    </div>
+                    <p class="bias-desc">
+                        以为随机事件会"均值回归"。<br>
+                        连续亏损后认为下次肯定赚
+                    </p>
+                    <div class="bias-example">
+                        <h5>📍 典型表现</h5>
+                        <p>"连跌5天了，明天肯定涨"</p>
+                        <p>股票连续下跌后加仓死扛</p>
+                    </div>
+                    <div class="solution">
+                        <strong>✅ 解决方案</strong>
+                        <p>每次决策独立分析，不被"连跌"影响</p>
+                    </div>
+                </div>
+
+                <div class="bias-card">
+                    <div class="bias-header">
+                        <div class="bias-icon">🏃</div>
+                        <div class="bias-title">处置效应</div>
+                    </div>
+                    <p class="bias-desc">
+                        卖出盈利股票太快，持有亏损股票太久。<br>
+                        "截断利润，让亏损奔跑"
+                    </p>
+                    <div class="bias-example">
+                        <h5>📍 典型表现</h5>
+                        <p>涨了5%赶紧卖，跌了30%还拿着</p>
+                        <p>结果：卖掉的继续涨，拿着的继续跌</p>
+                    </div>
+                    <div class="solution">
+                        <strong>✅ 解决方案</strong>
+                        <p>制定止盈止损规则，到点执行</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 心理周期 -->
+        <div class="section">
+            <div class="section-title">📈 投资者情绪周期</div>
+            <div style="display: flex; flex-direction: column; gap: 15px; margin: 20px 0;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="width: 100px; text-align: right; color: #ff6b6b; font-weight: bold;">绝望期</div>
+                    <div style="flex: 1; background: linear-gradient(90deg, #ff6b6b, #ff9f40); height: 40px; border-radius: 20px; display: flex; align-items: center; justify-content: center;">
+                        熊市底部 | 割肉离场 | 💀
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="width: 100px; text-align: right; color: #ff9f40; font-weight: bold;">犹豫期</div>
+                    <div style="flex: 1; background: linear-gradient(90deg, #ff9f40, #ffce56); height: 40px; border-radius: 20px; display: flex; align-items: center; justify-content: center;">
+                        底部回升 | 半信半疑 | 🤔
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="width: 100px; text-align: right; color: #43e97b; font-weight: bold;">乐观期</div>
+                    <div style="flex: 1; background: linear-gradient(90deg, #ffce56, #43e97b); height: 40px; border-radius: 20px; display: flex; align-items: center; justify-content: center;">
+                        牛市确认 | 信心恢复 | 😊
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="width: 100px; text-align: right; color: #4facfe; font-weight: bold;">兴奋期</div>
+                    <div style="flex: 1; background: linear-gradient(90deg, #43e97b, #4facfe); height: 40px; border-radius: 20px; display: flex; align-items: center; justify-content: center;">
+                        牛市高潮 | 泡沫形成 | 🤩
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="width: 100px; text-align: right; color: #a855f7; font-weight: bold;">狂热期</div>
+                    <div style="flex: 1; background: linear-gradient(90deg, #4facfe, #a855f7); height: 40px; border-radius: 20px; display: flex; align-items: center; justify-content: center;">
+                        全民炒股 | 疯狂追高 | 🤑
+                    </div>
+                </div>
+            </div>
+            <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; margin-top: 20px;">
+                <p><strong>💡 关键洞察：</strong></p>
+                <p>• 绝望期 = 最佳买入时机（但没人敢买）</p>
+                <p>• 狂热期 = 最佳卖出时机（但人人追买）</p>
+                <p>• 大多数人在错误的时间做错误的操作</p>
+            </div>
+        </div>
+
+        <!-- 克服方法 -->
+        <div class="section">
+            <div class="section-title">🛠️ 克服心理偏差的实用方法</div>
+            <div class="flow-steps">
+                <div class="flow-step">
+                    <div class="num">1</div>
+                    <h4>制定投资规则</h4>
+                    <p style="font-size: 0.9rem; color: #aaa; margin-top: 10px;">
+                        买入条件、止损位、持有周期
+                    </p>
+                </div>
+                <div class="flow-step">
+                    <div class="num">2</div>
+                    <h4>写投资日记</h4>
+                    <p style="font-size: 0.9rem; color: #aaa; margin-top: 10px;">
+                        记录决策过程和情绪状态
+                    </p>
+                </div>
+                <div class="flow-step">
+                    <div class="num">3</div>
+                    <h4>定期复盘</h4>
+                    <p style="font-size: 0.9rem; color: #aaa; margin-top: 10px;">
+                        检视自己的决策是否被情绪左右
+                    </p>
+                </div>
+                <div class="flow-step">
+                    <div class="num">4</div>
+                    <h4>延迟决策</h4>
+                    <p style="font-size: 0.9rem; color: #aaa; margin-top: 10px;">
+                        激动时先等24小时再做决定
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 核心要点 -->
+        <div class="highlight-box">
+            <h4>🎯 投资心理的核心要点</h4>
+            <p>1. <strong>认识自己</strong>：了解自己容易犯什么心理偏差</p>
+            <p>2. <strong>制定规则</strong>：用规则约束行为，不靠情绪决策</p>
+            <p>3. <strong>逆向思考</strong>：在别人贪婪时恐惧，在别人恐惧时贪婪</p>
+            <p>4. <strong>长期视角</strong>：用3-5年的视角看问题，不被短期波动左右</p>
+            <p>5. <strong>持续学习</strong>：理解行为金融学，做理性的投资者</p>
+        </div>
+
+        <div class="footer">
+            <p>📚 零基础投资学教程 | 图表库-风险管理-CH15-02</p>
+            <p>注：本图表配套第15章风险管理内容使用</p>
+        </div>
+    </div>
+</body>
+</html>

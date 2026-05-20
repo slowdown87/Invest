@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CH02-02 资产负债表结构图</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "Microsoft YaHei", "SimHei", Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .chart-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .chart-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 15px;
+        }
+        .chart-container {
+            position: relative;
+            height: 500px;
+            margin: 20px 0;
+        }
+        .legend-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .legend-table th, .legend-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .legend-table th {
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        .legend-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .asset-color { color: #27ae60; font-weight: bold; }
+        .liability-color { color: #e74c3c; font-weight: bold; }
+        .equity-color { color: #3498db; font-weight: bold; }
+        .formula-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .tree-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .tree-level {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        .tree-node {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            min-width: 120px;
+        }
+        .tree-node.asset { background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); }
+        .tree-node.liability { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
+        .tree-node.equity { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); }
+        .tree-connector {
+            width: 2px;
+            height: 30px;
+            background: #95a5a6;
+            margin: 0 auto;
+        }
+        .info-box {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="chart-card">
+            <h1 class="chart-title">📊 资产负债表结构图</h1>
+            
+            <div class="tree-diagram">
+                <div class="tree-level">
+                    <div class="tree-node" style="font-size: 20px; padding: 20px 40px;">
+                        资产负债表<br>
+                        <small style="font-size: 12px;">（Balance Sheet）</small>
+                    </div>
+                </div>
+                <div class="tree-connector"></div>
+                <div class="tree-level">
+                    <div class="tree-node asset">资产<br>100万</div>
+                    <div class="tree-node liability">负债<br>40万</div>
+                    <div class="tree-node equity">所有者权益<br>60万</div>
+                </div>
+            </div>
+
+            <div class="formula-box">
+                💡 会计恒等式：<strong>资产 = 负债 + 所有者权益</strong>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="balanceSheetChart"></canvas>
+            </div>
+
+            <table class="legend-table">
+                <tr>
+                    <th>类别</th>
+                    <th>主要科目</th>
+                    <th>特点</th>
+                    <th>分析方法</th>
+                </tr>
+                <tr>
+                    <td class="asset-color">流动资产</td>
+                    <td>货币资金、应收账款、存货</td>
+                    <td>1年内可变现</td>
+                    <td>关注变现能力和周转率</td>
+                </tr>
+                <tr>
+                    <td class="asset-color">非流动资产</td>
+                    <td>固定资产、无形资产、长期投资</td>
+                    <td>使用期限超过1年</td>
+                    <td>关注折旧和减值风险</td>
+                </tr>
+                <tr>
+                    <td class="liability-color">流动负债</td>
+                    <td>短期借款、应付账款、应付票据</td>
+                    <td>1年内需要偿还</td>
+                    <td>关注短期偿债压力</td>
+                </tr>
+                <tr>
+                    <td class="liability-color">非流动负债</td>
+                    <td>长期借款、应付债券</td>
+                    <td>1年以上偿还</td>
+                    <td>关注长期财务稳健性</td>
+                </tr>
+                <tr>
+                    <td class="equity-color">所有者权益</td>
+                    <td>实收资本、资本公积、盈余公积、未分配利润</td>
+                    <td>公司净资产</td>
+                    <td>关注盈利能力和分红能力</td>
+                </tr>
+            </table>
+
+            <div class="info-box">
+                <strong>📌 关键财务指标：</strong><br>
+                • <strong>资产负债率</strong> = 负债总额 / 资产总额 × 100%（一般50%-70%较为合理）<br>
+                • <strong>流动比率</strong> = 流动资产 / 流动负债（一般应大于2）<br>
+                • <strong>速动比率</strong> = (流动资产-存货) / 流动负债（一般应大于1）
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h2 class="chart-title" style="font-size: 20px;">📈 A股上市公司资产负债表结构示例</h2>
+            <div class="chart-container" style="height: 400px;">
+                <canvas id="stockBalanceChart"></canvas>
+            </div>
+            <table class="legend-table">
+                <tr>
+                    <th>公司</th>
+                    <th>行业</th>
+                    <th>资产负债率</th>
+                    <th>特征</th>
+                </tr>
+                <tr>
+                    <td>贵州茅台</td>
+                    <td>白酒</td>
+                    <td>约20%</td>
+                    <td>低负债高现金，议价能力强</td>
+                </tr>
+                <tr>
+                    <td>宁德时代</td>
+                    <td>新能源</td>
+                    <td>约70%</td>
+                    <td>重资产行业，扩张期高负债</td>
+                </tr>
+                <tr>
+                    <td>中国平安</td>
+                    <td>保险</td>
+                    <td>约90%</td>
+                    <td>金融特性，负债包含保单</td>
+                </tr>
+                <tr>
+                    <td>万科A</td>
+                    <td>房地产</td>
+                    <td>约80%</td>
+                    <td>高杠杆行业，预收房款计入负债</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const colors = {
+            assets: {
+                current: ['#27ae60', '#2ecc71', '#58d68d', '#82e0aa', '#abebc6', '#d5f5e3'],
+                nonCurrent: ['#1e8449', '#196f3d', '#145a32', '#0e6251', '#0b5345', '#08253e']
+            },
+            liabilities: {
+                current: ['#e74c3c', '#c0392b', '#a93226', '#922b21', '#7b241c', '#641e16'],
+                nonCurrent: ['#d35400', '#ba4a00', '#a04000', '#873600', '#6e2f1a', '#5d2f1a']
+            },
+            equity: ['#3498db', '#2980b9', '#2471a3', '#1f618d', '#1a5276', '#154360']
+        };
+
+        const balanceSheetCtx = document.getElementById('balanceSheetChart').getContext('2d');
+        new Chart(balanceSheetCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['流动资产', '非流动资产', '流动负债', '非流动负债', '所有者权益'],
+                datasets: [{
+                    data: [35, 25, 20, 5, 15],
+                    backgroundColor: [
+                        '#27ae60', '#1e8449', 
+                        '#e74c3c', '#d35400', 
+                        '#3498db'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '企业资产负债表结构分布（示意）',
+                        font: { size: 16, weight: 'bold' }
+                    },
+                    legend: {
+                        position: 'right',
+                        labels: { 
+                            padding: 20,
+                            font: { size: 14 }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.raw + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        const stockBalanceCtx = document.getElementById('stockBalanceChart').getContext('2d');
+        new Chart(stockBalanceCtx, {
+            type: 'bar',
+            data: {
+                labels: ['贵州茅台', '宁德时代', '中国平安', '万科A', '招商银行'],
+                datasets: [
+                    {
+                        label: '资产总计',
+                        data: [100, 100, 100, 100, 100],
+                        backgroundColor: '#3498db',
+                        stack: 'stack1'
+                    },
+                    {
+                        label: '负债合计',
+                        data: [20, 70, 90, 80, 91],
+                        backgroundColor: '#e74c3c',
+                        stack: 'stack2'
+                    },
+                    {
+                        label: '所有者权益',
+                        data: [80, 30, 10, 20, 9],
+                        backgroundColor: '#27ae60',
+                        stack: 'stack2'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'A股上市公司资产负债结构对比（单位：%）',
+                        font: { size: 16, weight: 'bold' }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': ' + context.raw + '%';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: { stacked: true },
+                    y: { 
+                        stacked: true,
+                        max: 200,
+                        title: {
+                            display: true,
+                            text: '占比 (%)'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>投资体系全景图 - 零基础投资学教程</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            text-align: center;
+            color: #a0a0a0;
+            margin-bottom: 40px;
+        }
+        .pyramid-container {
+            display: flex;
+            justify-content: center;
+            margin: 40px 0;
+        }
+        .pyramid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .pyramid-level {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            border-radius: 8px;
+            padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        .pyramid-level:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .level-1 {
+            width: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-size: 1.2rem;
+        }
+        .level-2 {
+            width: 400px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            font-size: 1.1rem;
+        }
+        .level-3 {
+            width: 600px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            font-size: 1rem;
+        }
+        .level-4 {
+            width: 800px;
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            font-size: 0.95rem;
+        }
+        .level-5 {
+            width: 1000px;
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            font-size: 0.9rem;
+        }
+        .pyramid-content {
+            font-size: 0.85rem;
+            margin-top: 8px;
+            opacity: 0.9;
+        }
+        .section-title {
+            text-align: center;
+            font-size: 1.5rem;
+            margin: 40px 0 20px;
+            color: #f093fb;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .card h3 {
+            color: #4facfe;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        .card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .card li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.9rem;
+        }
+        .card li:before {
+            content: "▸ ";
+            color: #f5576c;
+        }
+        .flow-chart {
+            background: rgba(255,255,255,0.02);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+        .flow-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .flow-step {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 25px;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            text-align: center;
+            min-width: 120px;
+        }
+        .flow-arrow {
+            color: #f5576c;
+            font-size: 1.5rem;
+        }
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📈 投资体系全景图</h1>
+        <p class="subtitle">从入门到精通，构建完整的投资认知框架</p>
+
+        <!-- 金字塔结构 -->
+        <div class="pyramid-container">
+            <div class="pyramid">
+                <div class="pyramid-level level-1">
+                    <div>
+                        <div>🏛️ 投资哲学</div>
+                        <div class="pyramid-content">巴菲特体系 · 长期主义 · 复利思维</div>
+                    </div>
+                </div>
+                <div class="pyramid-level level-2">
+                    <div>
+                        <div>📊 价值分析</div>
+                        <div class="pyramid-content">护城河 · 定性定量 · 安全边际</div>
+                    </div>
+                </div>
+                <div class="pyramid-level level-3">
+                    <div>
+                        <div>⚖️ 资产配置</div>
+                        <div class="pyramid-content">资金分层 · 经典模型 · 再平衡</div>
+                    </div>
+                </div>
+                <div class="pyramid-level level-4">
+                    <div>
+                        <div>🎯 投资策略</div>
+                        <div class="pyramid-content">高股息 · 指数定投 · 核心卫星</div>
+                    </div>
+                </div>
+                <div class="pyramid-level level-5">
+                    <div>
+                        <div>🛡️ 风险管理</div>
+                        <div class="pyramid-content">止损纪律 · 仓位管理 · 心理建设</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 投资进阶路径 -->
+        <h2 class="section-title">🎓 投资能力成长路径</h2>
+        <div class="flow-chart">
+            <div class="flow-steps">
+                <div class="flow-step">📖 筑基入门</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">🔧 工具掌握</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">📐 分析方法</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">🚀 实战进阶</div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">💎 持续精进</div>
+            </div>
+        </div>
+
+        <!-- 五大支柱 -->
+        <h2 class="section-title">🛤️ 投资学习五大支柱</h2>
+        <div class="grid">
+            <div class="card">
+                <h3>① 投资哲学（地基）</h3>
+                <ul>
+                    <li>买股票就是买企业所有权</li>
+                    <li>能力圈原则：不懂不投</li>
+                    <li>安全边际：逆向为王</li>
+                    <li>长期主义：复利为王</li>
+                    <li>市场先生：波动是朋友</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>② 价值分析（支柱）</h3>
+                <ul>
+                    <li>财务报表三张表解读</li>
+                    <li>护城河五种类型分析</li>
+                    <li>定性定量结合分析</li>
+                    <li>估值方法实战应用</li>
+                    <li>安全边际计算</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>③ 资产配置（框架）</h3>
+                <ul>
+                    <li>三层资金配置体系</li>
+                    <li>经典配置模型</li>
+                    <li>核心-卫星策略</li>
+                    <li>再平衡机制</li>
+                    <li>年龄配置策略</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>④ 投资策略（方法）</h3>
+                <ul>
+                    <li>指数基金定投</li>
+                    <li>高股息策略</li>
+                    <li>成长股投资</li>
+                    <li>行业轮动策略</li>
+                    <li>事件驱动策略</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h3>⑤ 风险管理（保障）</h3>
+                <ul>
+                    <li>止损纪律设定</li>
+                    <li>仓位管理原则</li>
+                    <li>心理偏差识别</li>
+                    <li>交易记录复盘</li>
+                    <li>风险预案制定</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 核心能力雷达图 -->
+        <h2 class="section-title">🎯 投资者核心能力雷达</h2>
+        <div style="background: rgba(255,255,255,0.02); border-radius: 16px; padding: 30px; margin: 20px 0;">
+            <canvas id="radarChart" width="600" height="400"></canvas>
+        </div>
+
+        <!-- 资金配置比例 -->
+        <h2 class="section-title">💰 不同人群资产配置参考</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin: 20px 0;">
+            <div class="card" style="text-align: center;">
+                <h3>保守型（50岁以上）</h3>
+                <canvas id="pieChart1" width="200" height="200"></canvas>
+                <p style="font-size: 0.8rem; color: #aaa; margin-top: 10px;">股票30% · 债券40% · 现金30%</p>
+            </div>
+            <div class="card" style="text-align: center;">
+                <h3>平衡型（35-50岁）</h3>
+                <canvas id="pieChart2" width="200" height="200"></canvas>
+                <p style="font-size: 0.8rem; color: #aaa; margin-top: 10px;">股票50% · 债券30% · 现金20%</p>
+            </div>
+            <div class="card" style="text-align: center;">
+                <h3>进取型（25-35岁）</h3>
+                <canvas id="pieChart3" width="200" height="200"></canvas>
+                <p style="font-size: 0.8rem; color: #aaa; margin-top: 10px;">股票70% · 债券20% · 现金10%</p>
+            </div>
+            <div class="card" style="text-align: center;">
+                <h3>激进型（25岁以下）</h3>
+                <canvas id="pieChart4" width="200" height="200"></canvas>
+                <p style="font-size: 0.8rem; color: #aaa; margin-top: 10px;">股票85% · 债券10% · 现金5%</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>📚 零基础投资学教程 | 图表库-综合图表-CH00-01</p>
+            <p>投资有风险，入市需谨慎。本内容仅供参考。</p>
+        </div>
+    </div>
+
+    <script>
+        // 雷达图 - 核心能力
+        const radarCtx = document.getElementById('radarChart').getContext('2d');
+        new Chart(radarCtx, {
+            type: 'radar',
+            data: {
+                labels: ['投资哲学', '财务分析', '估值能力', '仓位管理', '心理素质', '行业认知'],
+                datasets: [{
+                    label: '当前水平',
+                    data: [60, 70, 55, 50, 45, 50],
+                    fill: true,
+                    backgroundColor: 'rgba(102, 126, 234, 0.2)',
+                    borderColor: '#667eea',
+                    pointBackgroundColor: '#667eea',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#667eea'
+                }, {
+                    label: '目标水平',
+                    data: [90, 90, 85, 80, 85, 80],
+                    fill: true,
+                    backgroundColor: 'rgba(245, 87, 108, 0.2)',
+                    borderColor: '#f5576c',
+                    pointBackgroundColor: '#f5576c',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#f5576c'
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            stepSize: 20,
+                            color: '#aaa'
+                        },
+                        pointLabels: {
+                            color: '#fff',
+                            font: { size: 14 }
+                        },
+                        grid: { color: 'rgba(255,255,255,0.1)' }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '投资者核心能力评估',
+                        color: '#fff',
+                        font: { size: 16 }
+                    },
+                    legend: {
+                        labels: { color: '#fff' }
+                    }
+                }
+            }
+        });
+
+        // 饼图 - 各类型配置
+        const pieOptions = {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: '#fff', font: { size: 11 } }
+                }
+            }
+        };
+
+        new Chart(document.getElementById('pieChart1'), {
+            type: 'doughnut',
+            data: {
+                labels: ['股票', '债券', '现金/货币基金'],
+                datasets: [{
+                    data: [30, 40, 30],
+                    backgroundColor: ['#ff6384', '#36a2eb', '#ffce56'],
+                    borderWidth: 0
+                }]
+            },
+            options: pieOptions
+        });
+
+        new Chart(document.getElementById('pieChart2'), {
+            type: 'doughnut',
+            data: {
+                labels: ['股票', '债券', '现金/货币基金'],
+                datasets: [{
+                    data: [50, 30, 20],
+                    backgroundColor: ['#ff6384', '#36a2eb', '#ffce56'],
+                    borderWidth: 0
+                }]
+            },
+            options: pieOptions
+        });
+
+        new Chart(document.getElementById('pieChart3'), {
+            type: 'doughnut',
+            data: {
+                labels: ['股票', '债券', '现金/货币基金'],
+                datasets: [{
+                    data: [70, 20, 10],
+                    backgroundColor: ['#ff6384', '#36a2eb', '#ffce56'],
+                    borderWidth: 0
+                }]
+            },
+            options: pieOptions
+        });
+
+        new Chart(document.getElementById('pieChart4'), {
+            type: 'doughnut',
+            data: {
+                labels: ['股票', '债券', '现金/货币基金'],
+                datasets: [{
+                    data: [85, 10, 5],
+                    backgroundColor: ['#ff6384', '#36a2eb', '#ffce56'],
+                    borderWidth: 0
+                }]
+            },
+            options: pieOptions
+        });
+    </script>
+</body>
+</html>

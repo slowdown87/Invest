@@ -1,0 +1,67 @@
+{
+  "projectName": "零基础投资学教程",
+  "version": "2.3",
+  "lastUpdated": "2026-05-20",
+  "overallStatus": "全面提升进行中",
+  "progress": {
+    "tutorial": {
+      "total": 16,
+      "completed": 16,
+      "percentage": 100,
+      "status": "已完成"
+    },
+    "newChapters": {
+      "total": 5,
+      "completed": 5,
+      "percentage": 100,
+      "status": "已完成"
+    },
+    "charts": {
+      "total": 60,
+      "completed": 27,
+      "percentage": 45,
+      "status": "进行中",
+      "created": [
+        {"id": "CH00-01", "name": "投资体系全景图", "category": "综合图表", "chapter": "第0章"},
+        {"id": "CH00-02", "name": "复利增长对比图", "category": "综合图表", "chapter": "第0章"},
+        {"id": "CH02-01", "name": "财务报表结构图", "category": "财务报表", "chapter": "第2章"},
+        {"id": "CH02-02", "name": "资产负债表结构图", "category": "财务报表", "chapter": "第2章"},
+        {"id": "CH02-03", "name": "利润表层次图", "category": "财务报表", "chapter": "第2章"},
+        {"id": "CH02-04", "name": "现金流量表流向图", "category": "财务报表", "chapter": "第2章"},
+        {"id": "CH11-01", "name": "估值方法对比图", "category": "估值分析", "chapter": "第11章"},
+        {"id": "CH11-02", "name": "PE与PB估值对比图", "category": "估值分析", "chapter": "第11章"},
+        {"id": "CH12-01", "name": "K线基础图解", "category": "技术分析", "chapter": "第12章"},
+        {"id": "CH12-02", "name": "技术形态详解", "category": "技术分析", "chapter": "第12章"},
+        {"id": "CH12-03", "name": "均线系统详解", "category": "技术分析", "chapter": "第12章"},
+        {"id": "CH12-04", "name": "MACD指标详解", "category": "技术分析", "chapter": "第12章"},
+        {"id": "CH12-05", "name": "KDJ指标详解", "category": "技术分析", "chapter": "第12章"},
+        {"id": "CH12-06", "name": "布林带详解", "category": "技术分析", "chapter": "第12章"},
+        {"id": "CH12-07", "name": "成交量分析图", "category": "技术分析", "chapter": "第12章"},
+        {"id": "CH13-01", "name": "美林时钟", "category": "宏观行业", "chapter": "第13章"},
+        {"id": "CH13-02", "name": "行业轮动与周期", "category": "宏观行业", "chapter": "第13章"},
+        {"id": "CH15-01", "name": "止损策略详解", "category": "风险管理", "chapter": "第15章"},
+        {"id": "CH15-02", "name": "投资心理偏差图", "category": "风险管理", "chapter": "第15章"},
+        {"id": "CH17-01", "name": "护城河五种类型", "category": "综合图表", "chapter": "第17章"},
+        {"id": "CH18-01", "name": "三层资金配置体系", "category": "资产配置", "chapter": "第18章"},
+        {"id": "CH18-02", "name": "股债配置对比图", "category": "资产配置", "chapter": "第18章"},
+        {"id": "CH18-03", "name": "再平衡机制详解", "category": "资产配置", "chapter": "第18章"},
+        {"id": "CH19-01", "name": "高股息选股流程图", "category": "投资策略", "chapter": "第19章"},
+        {"id": "CH20-01", "name": "定投微笑曲线", "category": "投资策略", "chapter": "第20章"},
+        {"id": "CH-CASE-01", "name": "茅台十年K线图", "category": "案例图表", "chapter": "跨章节"},
+        {"id": "CH-CASE-02", "name": "宁德时代走势图", "category": "案例图表", "chapter": "跨章节"},
+        {"id": "CH-CASE-03", "name": "乐视退市警示", "category": "案例图表", "chapter": "跨章节"}
+      ]
+    },
+    "overall": {
+      "percentage": 65,
+      "estimatedCompletion": "待定"
+    }
+  },
+  "currentPhase": "图表库开发阶段",
+  "recentChanges": [
+    "创建图表关联设计文档",
+    "新增技术分析图表：KDJ、布林带、成交量",
+    "新增案例图表：茅台、宁德时代、乐视退市",
+    "图表总数达到27张"
+  ]
+}

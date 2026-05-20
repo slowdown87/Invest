@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>美林时钟 - 零基础投资学教程</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        h1 {
+            text-align: center;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle { text-align: center; color: #aaa; margin-bottom: 30px; }
+        .clock-container {
+            position: relative;
+            width: 600px;
+            height: 600px;
+            margin: 40px auto;
+        }
+        .quadrant {
+            position: absolute;
+            width: 280px;
+            height: 280px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .quadrant:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+        .q1 { top: 0; left: 0; background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .q2 { top: 0; right: 0; background: linear-gradient(135deg, #43e97b, #38f9d7); }
+        .q3 { bottom: 0; right: 0; background: linear-gradient(135deg, #fa709a, #fee140); }
+        .q4 { bottom: 0; left: 0; background: linear-gradient(135deg, #f5576c, #f093fb); }
+        .quadrant h3 { font-size: 1.3rem; margin-bottom: 10px; }
+        .quadrant .period { font-size: 0.9rem; opacity: 0.9; margin-bottom: 15px; }
+        .quadrant .desc { font-size: 0.85rem; line-height: 1.6; }
+        .quadrant .assets {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        .arrow {
+            position: absolute;
+            font-size: 2rem;
+            color: rgba(255,255,255,0.3);
+        }
+        .arrow-1 { top: 140px; left: 300px; }
+        .arrow-2 { top: 300px; right: 140px; }
+        .arrow-3 { bottom: 140px; right: 300px; }
+        .arrow-4 { top: 300px; left: 140px; }
+        .center-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        .chart-container {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .chart-title {
+            font-size: 1.3rem;
+            color: #4facfe;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .detail-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 25px;
+            border-left: 4px solid;
+        }
+        .detail-card:nth-child(1) { border-color: #4facfe; }
+        .detail-card:nth-child(2) { border-color: #43e97b; }
+        .detail-card:nth-child(3) { border-color: #fa709a; }
+        .detail-card:nth-child(4) { border-color: #f5576c; }
+        .detail-card h4 { margin-bottom: 15px; font-size: 1.1rem; }
+        .detail-card ul {
+            list-style: none;
+            padding: 0;
+        }
+        .detail-card li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.9rem;
+        }
+        .best-asset {
+            display: inline-block;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin: 5px;
+        }
+        .china-note {
+            background: rgba(255, 159, 64, 0.2);
+            border: 1px solid rgba(255, 159, 64, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .china-note h4 { color: #ff9f40; margin-bottom: 10px; }
+        .china-note p { line-height: 1.8; font-size: 0.9rem; }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⏰ 美林时钟</h1>
+        <p class="subtitle">经济周期与资产配置的核心框架——"时钟"转动，财富轮动</p>
+
+        <!-- 时钟图 -->
+        <div class="clock-container">
+            <div class="quadrant q1">
+                <h3>🌱 复苏期</h3>
+                <div class="period">经济上行 ↑ | 通胀下行 ↓</div>
+                <div class="desc">
+                    <p>政策刺激见效</p>
+                    <p>企业盈利恢复</p>
+                    <p>宽松货币环境</p>
+                </div>
+                <div class="assets">🏆 最佳配置：股票</div>
+            </div>
+            <div class="quadrant q2">
+                <h3>🔥 过热期</h3>
+                <div class="period">经济上行 ↑ | 通胀上行 ↑</div>
+                <div class="desc">
+                    <p>需求旺盛</p>
+                    <p>通胀上升</p>
+                    <p>商品涨价</p>
+                </div>
+                <div class="assets">🏆 最佳配置：商品/现金</div>
+            </div>
+            <div class="quadrant q3">
+                <h3>❄️ 滞胀期</h3>
+                <div class="period">经济下行 ↓ | 通胀上行 ↑</div>
+                <div class="desc">
+                    <p>增长停滞</p>
+                    <p>成本上升</p>
+                    <p>盈利压缩</p>
+                </div>
+                <div class="assets">🏆 最佳配置：现金/债券</div>
+            </div>
+            <div class="quadrant q4">
+                <h3>🌧️ 衰退期</h3>
+                <div class="period">经济下行 ↓ | 通胀下行 ↓</div>
+                <div class="desc">
+                    <p>需求萎缩</p>
+                    <p>通缩压力</p>
+                    <p>政策宽松</p>
+                </div>
+                <div class="assets">🏆 最佳配置：债券/股票</div>
+            </div>
+            <div class="arrow arrow-1">→</div>
+            <div class="arrow arrow-2">↓</div>
+            <div class="arrow arrow-3">←</div>
+            <div class="arrow arrow-4">↑</div>
+            <div class="center-text">美林<br>时钟</div>
+        </div>
+
+        <!-- 详细说明 -->
+        <div class="chart-container">
+            <div class="chart-title">📖 四个经济周期的详细解读</div>
+            <div class="detail-grid">
+                <div class="detail-card">
+                    <h4>🌱 复苏期（Early Expansion）</h4>
+                    <ul>
+                        <li>GDP增长：回升 ↑</li>
+                        <li>通胀：低位 ↓</li>
+                        <li>利率：低水平</li>
+                        <li>企业盈利：改善</li>
+                        <li>就业：逐步回升</li>
+                    </ul>
+                    <div style="margin-top: 15px;">
+                        <span class="best-asset">📈 股票</span>
+                        <span class="best-asset">🏭 工业</span>
+                        <span class="best-asset">💳 消费</span>
+                    </div>
+                </div>
+                <div class="detail-card">
+                    <h4>🔥 过热期（Late Expansion）</h4>
+                    <ul>
+                        <li>GDP增长：高峰 ↑</li>
+                        <li>通胀：上升 ↑</li>
+                        <li>利率：抬升</li>
+                        <li>企业盈利：高位</li>
+                        <li>产能：紧张</li>
+                    </ul>
+                    <div style="margin-top: 15px;">
+                        <span class="best-asset">🪙 商品</span>
+                        <span class="best-asset">💰 现金</span>
+                        <span class="best-asset">🏘️ 房地产</span>
+                    </div>
+                </div>
+                <div class="detail-card">
+                    <h4>❄️ 滞胀期（Stagflation）</h4>
+                    <ul>
+                        <li>GDP增长：下滑 ↓</li>
+                        <li>通胀：高位 ↑</li>
+                        <li>利率：高水平</li>
+                        <li>企业盈利：压缩</li>
+                        <li>失业：上升</li>
+                    </ul>
+                    <div style="margin-top: 15px;">
+                        <span class="best-asset">💵 现金</span>
+                        <span class="best-asset">📉 债券</span>
+                        <span class="best-asset">🏥 医药</span>
+                    </div>
+                </div>
+                <div class="detail-card">
+                    <h4>🌧️ 衰退期（Contraction）</h4>
+                    <ul>
+                        <li>GDP增长：负增长 ↓</li>
+                        <li>通胀：下行 ↓</li>
+                        <li>利率：降息</li>
+                        <li>企业盈利：下滑</li>
+                        <li>政策：刺激</li>
+                    </ul>
+                    <div style="margin-top: 15px;">
+                        <span class="best-asset">📊 债券</span>
+                        <span class="best-asset">🛡️ 防御股</span>
+                        <span class="best-asset">💼 公共事业</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- A股适配说明 -->
+        <div class="china-note">
+            <h4>🇨🇳 美林时钟在中国A股的适配</h4>
+            <p>
+                <strong>特殊之处：</strong>A股的"时钟"转动更快，周期更短，通常3-5年完成一轮完整周期。
+            </p>
+            <p style="margin-top: 10px;">
+                <strong>政策因素：</strong>中国A股受政策影响较大，宏观调控往往"时钟快进"，需要关注货币政策、财政政策和产业政策的变化。
+            </p>
+            <p style="margin-top: 10px;">
+                <strong>行业轮动：</strong>A股行业轮动遵循"政策预期 → 估值修复 → 盈利验证 → 预期兑现"的路径，与美林时钟有差异。
+            </p>
+        </div>
+
+        <!-- A股周期特征 -->
+        <div class="chart-container">
+            <div class="chart-title">📊 A股市场周期与行业表现</div>
+            <canvas id="cycleChart" height="80"></canvas>
+        </div>
+
+        <!-- 如何判断周期 -->
+        <div class="chart-container">
+            <div class="chart-title">🔍 如何判断当前处于哪个阶段？</div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+                <div style="background: rgba(79,172,254,0.2); padding: 20px; border-radius: 12px; text-align: center;">
+                    <h4 style="color: #4facfe;">📊 看GDP增速</h4>
+                    <p style="margin-top: 10px; font-size: 0.9rem;">
+                        >6%：扩张期<br>
+                        5-6%：平稳期<br>
+                        <5%：衰退期
+                    </p>
+                </div>
+                <div style="background: rgba(67,233,123,0.2); padding: 20px; border-radius: 12px; text-align: center;">
+                    <h4 style="color: #43e97b;">📈 看CPI/PPI</h4>
+                    <p style="margin-top: 10px; font-size: 0.9rem;">
+                        CPI<2%：通缩风险<br>
+                        CPI 2-3%：温和通胀<br>
+                        CPI>5%：通胀压力
+                    </p>
+                </div>
+                <div style="background: rgba(250,112,154,0.2); padding: 20px; border-radius: 12px; text-align: center;">
+                    <h4 style="color: #fa709a;">💰 看货币政策</h4>
+                    <p style="margin-top: 10px; font-size: 0.9rem;">
+                        降息降准：宽松期<br>
+                        利率稳定：中性期<br>
+                        加息升准：紧缩期
+                    </p>
+                </div>
+                <div style="background: rgba(245,87,108,0.2); padding: 20px; border-radius: 12px; text-align: center;">
+                    <h4 style="color: #f5576c;">🏭 看企业盈利</h4>
+                    <p style="margin-top: 10px; font-size: 0.9rem;">
+                        全A盈利增速>10%：繁荣<br>
+                        全A盈利增速0-10%：平稳<br>
+                        全A盈利增速<0%：衰退
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>📚 零基础投资学教程 | 图表库-宏观行业-CH13-01</p>
+            <p>注：美林时钟是理论框架，实际应用中需结合市场具体情况</p>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('cycleChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['复苏期', '过热期', '滞胀期', '衰退期'],
+                datasets: [{
+                    label: '股票',
+                    data: [80, 60, 20, 40],
+                    backgroundColor: 'rgba(79, 172, 254, 0.8)',
+                    stack: 'stack0'
+                }, {
+                    label: '债券',
+                    data: [40, 20, 50, 80],
+                    backgroundColor: 'rgba(67, 233, 123, 0.8)',
+                    stack: 'stack0'
+                }, {
+                    label: '商品',
+                    data: [30, 80, 60, 20],
+                    backgroundColor: 'rgba(250, 112, 154, 0.8)',
+                    stack: 'stack0'
+                }, {
+                    label: '现金',
+                    data: [20, 40, 70, 30],
+                    backgroundColor: 'rgba(245, 87, 108, 0.8)',
+                    stack: 'stack0'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: {
+                        display: true,
+                        text: '不同周期下各类资产相对表现（数值越大表现越好）'
+                    }
+                },
+                scales: {
+                    x: { stacked: true },
+                    y: { 
+                        stacked: true,
+                        title: { display: true, text: '相对表现得分' },
+                        min: 0,
+                        max: 250
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

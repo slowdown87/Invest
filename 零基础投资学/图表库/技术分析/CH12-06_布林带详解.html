@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CH12-06 布林带详解</title>
+    <!--
+    图表元数据：
+    - 图表编号: CH12-06
+    - 图表名称: 布林带详解
+    - 所属章节: 第12章-技术分析入门
+    - 相关章节: 第12章-均线系统、第12章-KDJ指标
+    - 关键词: 布林带、Band、突破、缩口、开口
+    - 创建日期: 2026-05-20
+    -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: "Microsoft YaHei", "SimHei", Arial, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .chart-card { background: rgba(255, 255, 255, 0.95); border-radius: 16px; padding: 30px; margin-bottom: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        .chart-title { font-size: 24px; font-weight: bold; color: #2c3e50; margin-bottom: 20px; text-align: center; border-bottom: 3px solid #1abc9c; padding-bottom: 15px; }
+        .formula-section { background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%); color: white; padding: 25px; border-radius: 12px; margin: 20px 0; }
+        .formula-section h4 { font-size: 18px; margin-bottom: 15px; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px; }
+        .formula { background: rgba(255,255,255,0.2); padding: 15px; border-radius: 8px; margin: 10px 0; font-family: "Courier New", monospace; font-size: 15px; }
+        .bollinger-visual { background: #f8f9fa; padding: 20px; border-radius: 12px; margin: 20px 0; }
+        .band-visual { position: relative; height: 200px; margin: 20px 0; }
+        .band-line { position: absolute; width: 100%; border: 2px solid; }
+        .band-upper { border-color: #e74c3c; top: 10%; }
+        .band-middle { border-color: #3498db; top: 50%; border-style: dashed; }
+        .band-lower { border-color: #27ae60; top: 90%; }
+        .band-fill { position: absolute; width: 100%; top: 10%; height: 80%; background: rgba(52, 152, 219, 0.1); }
+        .chart-container { height: 450px; margin: 20px 0; }
+        .signal-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin: 20px 0; }
+        .signal-card { padding: 20px; border-radius: 12px; text-align: center; color: white; }
+        .signal-card.break-up { background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%); }
+        .signal-card.break-down { background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); }
+        .signal-card.squeeze { background: linear-gradient(135deg, #f39c12 0%, #d68910 100%); }
+        .signal-card.normal { background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); }
+        .signal-card h5 { font-size: 16px; margin-bottom: 10px; }
+        .tips-box { background: #e8f4f8; border-left: 4px solid #1abc9c; padding: 20px; margin: 20px 0; border-radius: 0 12px 12px 0; }
+        .tips-box h4 { color: #16a085; margin-bottom: 15px; }
+        .comparison-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .comparison-table th, .comparison-table td { border: 1px solid #ddd; padding: 12px; text-align: center; }
+        .comparison-table th { background: #1abc9c; color: white; }
+        .comparison-table tr:nth-child(even) { background: #f8f9fa; }
+        .chapter-nav { background: #f8f9fa; padding: 20px; border-radius: 12px; margin-top: 20px; }
+        .chapter-nav h4 { color: #2c3e50; margin-bottom: 15px; }
+        .chapter-nav ul { list-style: none; padding: 0; }
+        .chapter-nav li { padding: 8px 0; border-bottom: 1px solid #ddd; }
+        .chapter-nav a { display: inline-block; margin-top: 15px; padding: 10px 20px; background: #3498db; color: white; text-decoration: none; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="chart-card">
+            <h1 class="chart-title">🎯 布林带（Bollinger Bands）详解</h1>
+            
+            <div class="formula-section">
+                <h4>🔢 布林带计算公式</h4>
+                <div class="formula">
+                    <strong>中轨 (Middle Band) = N日简单移动平均线 (MA)</strong><br>
+                    <small>默认N=20</small>
+                </div>
+                <div class="formula">
+                    <strong>标准差 (SD) = √[Σ(收盘价 - MA)² / N]</strong>
+                </div>
+                <div class="formula">
+                    <strong>上轨 (Upper Band) = 中轨 + 2 × 标准差</strong>
+                </div>
+                <div class="formula" style="background: rgba(255,255,255,0.3);">
+                    <strong>下轨 (Lower Band) = 中轨 - 2 × 标准差</strong><br>
+                    <small>约95%的价格波动会落在此区间内</small>
+                </div>
+            </div>
+
+            <div class="bollinger-visual">
+                <h4 style="text-align: center; margin-bottom: 20px;">布林带结构示意图</h4>
+                <div class="band-visual">
+                    <div class="band-fill"></div>
+                    <div class="band-line band-upper"></div>
+                    <div class="band-line band-middle"></div>
+                    <div class="band-line band-lower"></div>
+                    <div style="position: absolute; top: 5%; left: 10px; color: #e74c3c; font-weight: bold;">上轨（压力位）</div>
+                    <div style="position: absolute; top: 45%; left: 10px; color: #3498db; font-weight: bold;">中轨（均线）</div>
+                    <div style="position: absolute; top: 92%; left: 10px; color: #27ae60; font-weight: bold;">下轨（支撑位）</div>
+                </div>
+                <p style="text-align: center; color: #7f8c8d; margin-top: 10px;">
+                    价格在布林带内运行时：上轨为压力，下轨为支撑
+                </p>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="bollingerChart"></canvas>
+            </div>
+
+            <div class="signal-cards">
+                <div class="signal-card break-up">
+                    <h5>📗 股价突破上轨</h5>
+                    <p>可能进入强势上涨<br>但也可能过热回调<br><strong>结合成交量判断</strong></p>
+                </div>
+                <div class="signal-card break-down">
+                    <h5>📕 股价跌破下轨</h5>
+                    <p>可能进入弱势下跌<br>但也可能超卖反弹<br><strong>关注止跌信号</strong></p>
+                </div>
+                <div class="signal-card squeeze">
+                    <h5>📙 布林带收口（缩口）</h5>
+                    <p>波动率降低<br>市场酝酿变盘<br><strong>等待突破方向</strong></p>
+                </div>
+                <div class="signal-card normal">
+                    <h5>📘 布林带开口（扩口）</h5>
+                    <p>波动率放大<br>趋势可能加速<br><strong>顺势操作</strong></p>
+                </div>
+            </div>
+
+            <div class="tips-box">
+                <h4>💡 布林带实战用法</h4>
+                <table class="comparison-table">
+                    <tr>
+                        <th>形态</th>
+                        <th>含义</th>
+                        <th>操作建议</th>
+                    </tr>
+                    <tr>
+                        <td>上轨向下拐头</td>
+                        <td>上涨动力减弱</td>
+                        <td>考虑减仓</td>
+                    </tr>
+                    <tr>
+                        <td>下轨向上拐头</td>
+                        <td>下跌动能减弱</td>
+                        <td>关注买入机会</td>
+                    </tr>
+                    <tr>
+                        <td>股价紧贴上轨</td>
+                        <td>强势上涨</td>
+                        <td>持有但不追高</td>
+                    </tr>
+                    <tr>
+                        <td>股价紧贴下轨</td>
+                        <td>弱势下跌</td>
+                        <td>观望不抄底</td>
+                    </tr>
+                    <tr>
+                        <td>中轨向上倾斜</td>
+                        <td>上升趋势</td>
+                        <td>回调至中轨买入</td>
+                    </tr>
+                    <tr>
+                        <td>中轨向下倾斜</td>
+                        <td>下降趋势</td>
+                        <td>反弹至中轨卖出</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="tips-box">
+                <h4>📌 布林带参数调整</h4>
+                <p>
+                    <strong>短线交易：</strong>10, 2（敏感度高，信号多）<br>
+                    <strong>中线交易：</strong>20, 2（标准参数，最常用）<br>
+                    <strong>长线交易：</strong>30, 2（稳定性好，信号滞后）<br><br>
+                    <strong>标准差倍数：</strong><br>
+                    • 2倍：覆盖约95%价格波动（标准）<br>
+                    • 1倍：覆盖约68%价格波动（更敏感）<br>
+                    • 3倍：覆盖约99%价格波动（更稳定）
+                </p>
+            </div>
+
+            <div class="chapter-nav">
+                <h4>📖 相关章节</h4>
+                <ul>
+                    <li><strong>本章所属：</strong>第12章-技术分析入门</li>
+                    <li><strong>前置知识：</strong>第12章-均线系统</li>
+                    <li><strong>延伸阅读：</strong>第12章-KDJ指标、第12章-MACD指标</li>
+                    <li><strong>实战应用：</strong>第15章-风险管理止损与投资心理</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('bollingerChart').getContext('2d');
+        
+        function calculateSMA(data, period) {
+            const result = [];
+            for (let i = 0; i < data.length; i++) {
+                if (i < period - 1) {
+                    result.push(null);
+                } else {
+                    const sum = data.slice(i - period + 1, i + 1).reduce((a, b) => a + b, 0);
+                    result.push(sum / period);
+                }
+            }
+            return result;
+        }
+        
+        function calculateStdDev(data, sma, period) {
+            const result = [];
+            for (let i = 0; i < data.length; i++) {
+                if (i < period - 1) {
+                    result.push(0);
+                } else {
+                    const slice = data.slice(i - period + 1, i + 1);
+                    const mean = sma[i];
+                    const variance = slice.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / period;
+                    result.push(Math.sqrt(variance));
+                }
+            }
+            return result;
+        }
+        
+        const priceData = [100];
+        for (let i = 1; i < 60; i++) {
+            priceData.push(priceData[i-1] + (Math.random() - 0.48) * 8);
+        }
+        
+        const sma20 = calculateSMA(priceData, 20);
+        const stdDev = calculateStdDev(priceData, sma20, 20);
+        const upperBand = sma20.map((val, i) => val !== null ? val + 2 * stdDev[i] : null);
+        const lowerBand = sma20.map((val, i) => val !== null ? val - 2 * stdDev[i] : null);
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: Array.from({length: 60}, (_, i) => `Day ${i+1}`),
+                datasets: [
+                    {
+                        label: '股价',
+                        data: priceData,
+                        borderColor: '#2c3e50',
+                        backgroundColor: 'rgba(44, 62, 80, 0.1)',
+                        borderWidth: 3,
+                        fill: false,
+                        tension: 0.4
+                    },
+                    {
+                        label: '上轨',
+                        data: upperBand,
+                        borderColor: '#e74c3c',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        tension: 0.4,
+                        fill: false
+                    },
+                    {
+                        label: '中轨(MA20)',
+                        data: sma20,
+                        borderColor: '#3498db',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        fill: false
+                    },
+                    {
+                        label: '下轨',
+                        data: lowerBand,
+                        borderColor: '#27ae60',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        tension: 0.4,
+                        fill: '-1',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '布林带指标示意图',
+                        font: { size: 16, weight: 'bold' }
+                    }
+                },
+                scales: {
+                    y: {
+                        title: {
+                            display: true,
+                            text: '价格'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
